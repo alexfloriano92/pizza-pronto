@@ -179,6 +179,14 @@ function AcompanharPedido() {
           <div className="flex-1">
             <p className="text-sm font-bold text-primary">Seu pedido foi atualizado!</p>
             <p className="text-sm text-foreground">Agora está: {aviso}</p>
+            {pedido?.status === "saiu_para_entrega" && (
+              <Button asChild size="sm" className="mt-2">
+                <Link to="/rastreio/$id" params={{ id }}>
+                  <MapPin className="mr-1 size-4" />
+                  Ver entregador no mapa
+                </Link>
+              </Button>
+            )}
           </div>
           <button
             type="button"
