@@ -82,24 +82,21 @@ function Auth() {
               type="password"
               required
               minLength={6}
-              autoComplete={modo === "entrar" ? "current-password" : "new-password"}
+              autoComplete="current-password"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
             />
           </div>
           <Button type="submit" className="w-full" disabled={carregando}>
-            {carregando ? "Aguarde..." : modo === "entrar" ? "Entrar" : "Criar conta"}
+            {carregando ? "Aguarde..." : "Entrar"}
           </Button>
         </form>
 
         <div className="space-y-2 text-center text-sm">
-          <button
-            type="button"
-            className="text-primary underline-offset-4 hover:underline"
-            onClick={() => setModo(modo === "entrar" ? "criar" : "entrar")}
-          >
-            {modo === "entrar" ? "Criar uma conta" : "Já tenho conta"}
-          </button>
+          <p className="text-muted-foreground">
+            Contas são criadas apenas pelo administrador.
+          </p>
+
           <p>
             <Link to="/" className="text-muted-foreground underline-offset-4 hover:underline">
               Voltar ao cardápio
