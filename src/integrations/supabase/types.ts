@@ -21,10 +21,12 @@ export type Database = {
           cliente_telefone: string
           criado_em: string
           endereco: string | null
+          forma_pagamento: string
           id: string
           itens: Json
           status: string
           tipo_entrega: string
+          troco_para: number | null
           valor_total: number
         }
         Insert: {
@@ -33,10 +35,12 @@ export type Database = {
           cliente_telefone: string
           criado_em?: string
           endereco?: string | null
+          forma_pagamento?: string
           id?: string
           itens?: Json
           status?: string
           tipo_entrega: string
+          troco_para?: number | null
           valor_total?: number
         }
         Update: {
@@ -45,10 +49,12 @@ export type Database = {
           cliente_telefone?: string
           criado_em?: string
           endereco?: string | null
+          forma_pagamento?: string
           id?: string
           itens?: Json
           status?: string
           tipo_entrega?: string
+          troco_para?: number | null
           valor_total?: number
         }
         Relationships: []

@@ -47,7 +47,17 @@ export type ItemPedido = {
   preco_unitario: number;
 };
 
+export type FormaPagamento = "cartao" | "pix" | "dinheiro";
+
+export const FORMA_PAGAMENTO_LABEL: Record<FormaPagamento, string> = {
+  cartao: "Cartão",
+  pix: "Pix",
+  dinheiro: "Dinheiro",
+};
+
 export type Pedido = {
+  forma_pagamento: FormaPagamento;
+  troco_para: number | null;
   id: string;
   cliente_nome: string;
   cliente_telefone: string;

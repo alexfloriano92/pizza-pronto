@@ -10,6 +10,7 @@ import {
   TAMANHO_LABEL,
   moeda,
   proximoStatus,
+  FORMA_PAGAMENTO_LABEL,
   type ItemPedido,
   type Pedido,
   type StatusPedido,
@@ -206,6 +207,13 @@ function CardPedido({
             <Package className="mt-0.5 size-3 shrink-0" /> Retirada no balcão
           </>
         )}
+      </p>
+
+      <p className="mt-1 text-xs font-medium">
+        Pagamento: {FORMA_PAGAMENTO_LABEL[pedido.forma_pagamento] ?? pedido.forma_pagamento}
+        {pedido.forma_pagamento === "dinheiro" && pedido.troco_para
+          ? ` — troco para ${moeda(pedido.troco_para)}`
+          : ""}
       </p>
 
       <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
