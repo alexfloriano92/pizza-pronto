@@ -15,6 +15,7 @@ import {
   type Tamanho,
 } from "@/lib/pedidos";
 import { somMudancaStatus, somBuzinaMoto, vibrarEntrega } from "@/lib/som";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
