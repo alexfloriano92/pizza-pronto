@@ -208,6 +208,13 @@ function CardPedido({
         )}
       </p>
 
+      <p className="mt-1 text-xs font-medium">
+        Pagamento: {FORMA_PAGAMENTO_LABEL[pedido.forma_pagamento] ?? pedido.forma_pagamento}
+        {pedido.forma_pagamento === "dinheiro" && pedido.troco_para
+          ? ` — troco para ${moeda(pedido.troco_para)}`
+          : ""}
+      </p>
+
       <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
         <span className="text-lg font-extrabold text-primary">{moeda(pedido.valor_total)}</span>
         {proximo ? (
