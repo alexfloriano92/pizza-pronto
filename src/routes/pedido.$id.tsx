@@ -128,9 +128,20 @@ function AcompanharPedido() {
   return (
     <CabecalhoLoja>
       <h1 className="text-xl font-bold tracking-tight">Acompanhe seu pedido</h1>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Código: {pedido.id.slice(0, 8).toUpperCase()} · {pedido.cliente_nome}
-      </p>
+      <p className="mt-1 text-xs text-muted-foreground">Olá, {pedido.cliente_nome}!</p>
+
+      <div className="mt-3 rounded-2xl border border-primary/30 bg-primary/10 p-4 text-center">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Código do pedido
+        </p>
+        <p className="mt-1 font-mono text-2xl font-extrabold tracking-[0.3em] text-primary">
+          {pedido.id.replace(/-/g, "").slice(0, 8).toUpperCase()}
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Guarde este código para consultar seu pedido em “Acompanhar pedido”.
+        </p>
+      </div>
+
 
       <section className="mt-5 rounded-2xl border border-border bg-card p-4 shadow-sm">
         <ol className="space-y-1">
