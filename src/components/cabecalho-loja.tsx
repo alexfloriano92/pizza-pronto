@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ShoppingCart, Pizza } from "lucide-react";
+import { ShoppingCart, Pizza, Search } from "lucide-react";
 import { useCarrinho } from "@/lib/carrinho";
 
 export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
