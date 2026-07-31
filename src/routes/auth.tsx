@@ -44,7 +44,7 @@ function Auth() {
     setCarregando(true);
 
     if (modo === "entrar") {
-      const { error } = await supabase.auth.signInWithPassword({ email, senha: senha } as never);
+      const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
       setCarregando(false);
       if (error) {
         toast.error("E-mail ou senha inválidos.");
