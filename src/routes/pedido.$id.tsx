@@ -37,13 +37,14 @@ export const Route = createFileRoute("/pedido/$id")({
 });
 
 async function buscarPedido(id: string): Promise<Pedido | null> {
-  const { data, error } = await supabase.from("pedidos").select("*").eq("id", id).maybeSingle();
+  const { data, error } = await supabase.rpc("pedido_publico", { _id: id });
   if (error) throw error;
-  if (!data) return null;
+  const registro = (data ?? [])[0];
+  if (!registro) return null;
   return {
-    ...(data as unknown as Pedido),
-    itens: (data.itens as unknown as ItemPedido[]) ?? [],
-    valor_total: Number(data.valor_total),
+    ...(registro as unknown as Pedido),
+    itens: (registro.itens as unknown as ItemPedido[]) ?? [],
+    valor_total: Number(registro.valor_total),
   };
 }
 
@@ -57,7 +58,10 @@ function AcompanharPedido() {
   const { data: pedido, isLoading, refetch } = useQuery({
     queryKey: ["pedido", id],
     queryFn: () => buscarPedido(id),
+    refetchInterval: 10000,
+    refetchOnWindowFocus: true,
   });
+
 
   React.useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) {
