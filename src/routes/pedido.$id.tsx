@@ -15,6 +15,7 @@ import {
   type Tamanho,
 } from "@/lib/pedidos";
 import { somMudancaStatus, somBuzinaMoto, vibrarEntrega } from "@/lib/som";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -55,6 +56,13 @@ function AcompanharPedido() {
     "default",
   );
   const statusAnterior = React.useRef<StatusPedido | null>(null);
+  const [aviso, setAviso] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!aviso) return;
+    const t = setTimeout(() => setAviso(null), 12000);
+    return () => clearTimeout(t);
+  }, [aviso]);
 
   const queryClient = useQueryClient();
 
@@ -117,7 +125,14 @@ function AcompanharPedido() {
     } else {
       somMudancaStatus();
     }
+    // Aviso visual na própria tela do cliente
+    setAviso(STATUS_LABEL[pedido.status]);
+    toast.success("Seu pedido foi atualizado", {
+      description: `Agora está: ${STATUS_LABEL[pedido.status]}`,
+      duration: 8000,
+    });
     if (typeof window === "undefined" || !("Notification" in window)) return;
+
     if (Notification.permission !== "granted") return;
     try {
       new Notification("Pizza Frita — atualização do pedido", {
@@ -154,6 +169,27 @@ function AcompanharPedido() {
 
   return (
     <CabecalhoLoja>
+      {aviso && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="mb-4 flex items-start gap-3 rounded-2xl border-2 border-primary bg-primary/15 p-4 shadow-sm animate-in fade-in slide-in-from-top-2"
+        >
+          <Bell className="mt-0.5 size-5 shrink-0 text-primary" />
+          <div className="flex-1">
+            <p className="text-sm font-bold text-primary">Seu pedido foi atualizado!</p>
+            <p className="text-sm text-foreground">Agora está: {aviso}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setAviso(null)}
+            className="text-xs font-medium text-muted-foreground hover:text-foreground"
+          >
+            Fechar
+          </button>
+        </div>
+      )}
+
       <h1 className="text-xl font-bold tracking-tight">Acompanhe seu pedido</h1>
       <p className="mt-1 text-xs text-muted-foreground">Olá, {pedido.cliente_nome}!</p>
 
