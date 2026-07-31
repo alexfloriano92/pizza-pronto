@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Bell, BellOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CabecalhoLoja } from "@/components/cabecalho-loja";
@@ -69,8 +69,8 @@ function AcompanharPedido() {
     const canal = supabase
       .channel(`pedido-${id.replace(/-/g, "")}`)
       .on("broadcast", { event: "status" }, (mensagem) => {
-        const novo = (mensagem.payload as { record?: { status?: StatusPedido } })?.record?.status
-          ?? (mensagem.payload as { status?: StatusPedido })?.status;
+        const novo = (mensagem["payload"] as { record?: { status?: StatusPedido } })?.record?.status
+          ?? (mensagem["payload"] as { status?: StatusPedido })?.status;
         if (!novo) {
           void refetch();
           return;
