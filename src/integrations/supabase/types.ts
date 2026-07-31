@@ -154,6 +154,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      pedido_publico: {
+        Args: { _id: string }
+        Returns: {
+          atualizado_em: string
+          cliente_nome: string
+          criado_em: string
+          endereco: string
+          id: string
+          itens: Json
+          status: string
+          tipo_entrega: string
+          valor_total: number
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "equipe"
