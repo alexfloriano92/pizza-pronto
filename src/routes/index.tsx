@@ -89,13 +89,14 @@ function Cardapio() {
         </>
       )}
 
-      <p className="mt-10 text-center text-xs text-muted-foreground">
-        <Link to="/painel" className="underline underline-offset-2">
-          Painel da cozinha
-        </Link>{" "}
-        ·{" "}
-        <Link to="/admin" className="underline underline-offset-2">
-          Cadastro de produtos
+      <p className="mt-12 text-center">
+        <Link
+          to="/painel"
+          aria-label="Área da equipe"
+          title="Área da equipe"
+          className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground/40 transition-colors hover:text-muted-foreground"
+        >
+          <Lock className="size-3.5" />
         </Link>
       </p>
 
