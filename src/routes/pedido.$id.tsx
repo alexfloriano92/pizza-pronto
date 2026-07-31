@@ -75,18 +75,13 @@ function AcompanharPedido() {
   }, []);
 
   React.useEffect(() => {
-    const canal = supabase
-      .channel(`pedido-${id}`)
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "pedidos", filter: `id=eq.${id}` },
-        () => void refetch(),
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(canal);
+    const aoVoltar = () => {
+      if (document.visibilityState === "visible") void refetch();
     };
-  }, [id, refetch]);
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => document.removeEventListener("visibilitychange", aoVoltar);
+  }, [refetch]);
+
 
   React.useEffect(() => {
     if (!pedido) return;
