@@ -53,6 +53,41 @@ export function somMudancaStatus() {
   ]);
 }
 
+/** Buzina de moto — pedido saiu para a entrega. */
+export function somBuzinaMoto() {
+  const audio = contexto();
+  if (!audio) return;
+  const agora = audio.currentTime;
+
+  const toque = (inicio: number, duracao: number) => {
+    const master = audio.createGain();
+    master.gain.setValueAtTime(0.0001, agora + inicio);
+    master.gain.exponentialRampToValueAtTime(0.28, agora + inicio + 0.03);
+    master.gain.setValueAtTime(0.28, agora + inicio + duracao - 0.05);
+    master.gain.exponentialRampToValueAtTime(0.0001, agora + inicio + duracao);
+    master.connect(audio.destination);
+
+    // Duas frequências próximas + harmônico dão o timbre estridente da buzina.
+    for (const [freq, tipo, ganho] of [
+      [420, "square", 0.5],
+      [510, "square", 0.4],
+      [840, "sawtooth", 0.18],
+    ] as const) {
+      const osc = audio.createOscillator();
+      const g = audio.createGain();
+      osc.type = tipo;
+      osc.frequency.setValueAtTime(freq, agora + inicio);
+      g.gain.setValueAtTime(ganho, agora + inicio);
+      osc.connect(g).connect(master);
+      osc.start(agora + inicio);
+      osc.stop(agora + inicio + duracao + 0.02);
+    }
+  };
+
+  toque(0, 0.32);
+  toque(0.42, 0.5);
+}
+
 /** Deve ser chamado num gesto do usuário para liberar o áudio no navegador. */
 export function liberarAudio() {
   contexto();
