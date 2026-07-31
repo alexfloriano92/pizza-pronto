@@ -43,8 +43,10 @@ export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
                 </span>
               )}
             </Link>
-          )}
+            )}
+          </div>
         </div>
+
       </header>
 
       <main className="mx-auto max-w-4xl px-4 pb-24 pt-5">{children}</main>
