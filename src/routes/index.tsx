@@ -233,7 +233,7 @@ function DialogProduto({ produto, onClose }: { produto: Produto | null; onClose:
               tipo: produto.tipo,
               tamanho: produto.tipo === "pizza" ? tamanho : null,
               quantidade: 1,
-              observacoes: obs,
+              observacoes: produto.tipo === "pizza" ? obs : "",
               preco_unitario: precoAtual,
               imagem_url: produto.imagem_url,
             });
