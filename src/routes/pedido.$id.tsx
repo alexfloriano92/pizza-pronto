@@ -56,13 +56,34 @@ function AcompanharPedido() {
   );
   const statusAnterior = React.useRef<StatusPedido | null>(null);
 
+  const queryClient = useQueryClient();
+
   const { data: pedido, isLoading, refetch } = useQuery({
     queryKey: ["pedido", id],
     queryFn: () => buscarPedido(id),
-    refetchInterval: 10000,
     refetchOnWindowFocus: true,
   });
 
+  // Tempo real: o banco emite um broadcast no canal do pedido a cada mudança de status.
+  React.useEffect(() => {
+    const canal = supabase
+      .channel(`pedido-${id.replace(/-/g, "")}`)
+      .on("broadcast", { event: "status" }, (mensagem) => {
+        const novo = (mensagem.payload as { record?: { status?: StatusPedido } })?.record?.status
+          ?? (mensagem.payload as { status?: StatusPedido })?.status;
+        if (!novo) {
+          void refetch();
+          return;
+        }
+        queryClient.setQueryData(["pedido", id], (atual: Pedido | null | undefined) =>
+          atual ? { ...atual, status: novo } : atual,
+        );
+      })
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(canal);
+    };
+  }, [id, queryClient, refetch]);
 
   React.useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) {
@@ -82,6 +103,7 @@ function AcompanharPedido() {
     document.addEventListener("visibilitychange", aoVoltar);
     return () => document.removeEventListener("visibilitychange", aoVoltar);
   }, [refetch]);
+
 
 
   React.useEffect(() => {
