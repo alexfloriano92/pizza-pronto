@@ -46,28 +46,29 @@ function PaginaCheckout() {
     }
 
     setEnviando(true);
-    const { data, error } = await supabase
+    const novoId = crypto.randomUUID();
+    const { error } = await supabase
       .from("pedidos")
       .insert({
+        id: novoId,
         cliente_nome: nome.trim(),
         cliente_telefone: telefone.trim(),
         tipo_entrega: tipoEntrega,
         endereco: tipoEntrega === "entrega" ? endereco.trim() : null,
         itens: itens.map(({ key: _key, imagem_url: _img, ...resto }) => resto),
         valor_total: valorTotal,
-      })
-      .select("id")
-      .single();
+      });
     setEnviando(false);
 
-    if (error || !data) {
+    if (error) {
       toast.error("Não foi possível enviar o pedido. Tente novamente.");
       return;
     }
 
     limpar();
-    navigate({ to: "/pedido/$id", params: { id: data.id as string } });
+    navigate({ to: "/pedido/$id", params: { id: novoId } });
   }
+
 
   if (itens.length === 0) {
     return (
