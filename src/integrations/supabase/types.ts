@@ -14,7 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pedidos: {
+        Row: {
+          atualizado_em: string
+          cliente_nome: string
+          cliente_telefone: string
+          criado_em: string
+          endereco: string | null
+          id: string
+          itens: Json
+          status: string
+          tipo_entrega: string
+          valor_total: number
+        }
+        Insert: {
+          atualizado_em?: string
+          cliente_nome: string
+          cliente_telefone: string
+          criado_em?: string
+          endereco?: string | null
+          id?: string
+          itens?: Json
+          status?: string
+          tipo_entrega: string
+          valor_total?: number
+        }
+        Update: {
+          atualizado_em?: string
+          cliente_nome?: string
+          cliente_telefone?: string
+          criado_em?: string
+          endereco?: string | null
+          id?: string
+          itens?: Json
+          status?: string
+          tipo_entrega?: string
+          valor_total?: number
+        }
+        Relationships: []
+      }
+      precos_produto: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          id: string
+          preco: number
+          produto_id: string
+          tamanho: string | null
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          preco?: number
+          produto_id: string
+          tamanho?: string | null
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          preco?: number
+          produto_id?: string
+          tamanho?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "precos_produto_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produtos: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          descricao: string
+          disponivel: boolean
+          id: string
+          imagem_url: string | null
+          nome: string
+          tipo: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          descricao?: string
+          disponivel?: boolean
+          id?: string
+          imagem_url?: string | null
+          nome: string
+          tipo: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          descricao?: string
+          disponivel?: boolean
+          id?: string
+          imagem_url?: string | null
+          nome?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
