@@ -208,18 +208,20 @@ function DialogProduto({ produto, onClose }: { produto: Produto | null; onClose:
           </div>
         )}
 
-        <div>
-          <Label htmlFor="obs" className="mb-2 block">
-            Observações
-          </Label>
-          <Textarea
-            id="obs"
-            value={obs}
-            onChange={(e) => setObs(e.target.value)}
-            placeholder="Ex.: sem cebola, bem passada..."
-            rows={3}
-          />
-        </div>
+        {produto.tipo === "pizza" && (
+          <div>
+            <Label htmlFor="obs" className="mb-2 block">
+              Observações
+            </Label>
+            <Textarea
+              id="obs"
+              value={obs}
+              onChange={(e) => setObs(e.target.value)}
+              placeholder="Ex.: sem cebola, bem passada..."
+              rows={3}
+            />
+          </div>
+        )}
 
         <Button
           size="lg"
@@ -231,7 +233,7 @@ function DialogProduto({ produto, onClose }: { produto: Produto | null; onClose:
               tipo: produto.tipo,
               tamanho: produto.tipo === "pizza" ? tamanho : null,
               quantidade: 1,
-              observacoes: obs,
+              observacoes: produto.tipo === "pizza" ? obs : "",
               preco_unitario: precoAtual,
               imagem_url: produto.imagem_url,
             });
