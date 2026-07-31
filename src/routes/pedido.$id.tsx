@@ -118,7 +118,14 @@ function AcompanharPedido() {
     } else {
       somMudancaStatus();
     }
+    // Aviso visual na própria tela do cliente
+    setAviso(STATUS_LABEL[pedido.status]);
+    toast.success("Seu pedido foi atualizado", {
+      description: `Agora está: ${STATUS_LABEL[pedido.status]}`,
+      duration: 8000,
+    });
     if (typeof window === "undefined" || !("Notification" in window)) return;
+
     if (Notification.permission !== "granted") return;
     try {
       new Notification("Pizza Frita — atualização do pedido", {
