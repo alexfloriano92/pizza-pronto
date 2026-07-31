@@ -111,8 +111,12 @@ function AcompanharPedido() {
     const anterior = statusAnterior.current;
     statusAnterior.current = pedido.status;
     if (!anterior || anterior === pedido.status) return;
-    if (pedido.status === "saiu_para_entrega") somBuzinaMoto();
-    else somMudancaStatus();
+    if (pedido.status === "saiu_para_entrega") {
+      somBuzinaMoto();
+      vibrarEntrega();
+    } else {
+      somMudancaStatus();
+    }
     if (typeof window === "undefined" || !("Notification" in window)) return;
     if (Notification.permission !== "granted") return;
     try {
