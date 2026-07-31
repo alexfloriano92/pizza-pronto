@@ -14,7 +14,7 @@ import {
   type StatusPedido,
   type Tamanho,
 } from "@/lib/pedidos";
-import { somMudancaStatus } from "@/lib/som";
+import { somMudancaStatus, somBuzinaMoto } from "@/lib/som";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -111,7 +111,8 @@ function AcompanharPedido() {
     const anterior = statusAnterior.current;
     statusAnterior.current = pedido.status;
     if (!anterior || anterior === pedido.status) return;
-    somMudancaStatus();
+    if (pedido.status === "saiu_para_entrega") somBuzinaMoto();
+    else somMudancaStatus();
     if (typeof window === "undefined" || !("Notification" in window)) return;
     if (Notification.permission !== "granted") return;
     try {
