@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CabecalhoLoja } from "@/components/cabecalho-loja";
 import { useCarrinho } from "@/lib/carrinho";
 import { TAMANHO_LABEL, moeda, type Tamanho } from "@/lib/pedidos";
+import { liberarAudio } from "@/lib/som";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +37,8 @@ function PaginaCheckout() {
 
   async function confirmar(e: React.FormEvent) {
     e.preventDefault();
+    liberarAudio();
+
     if (itens.length === 0) {
       toast.error("Seu carrinho está vazio.");
       return;

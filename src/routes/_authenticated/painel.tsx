@@ -15,6 +15,7 @@ import {
   type StatusPedido,
   type Tamanho,
 } from "@/lib/pedidos";
+import { liberarAudio, somMudancaStatus, somNovoPedido } from "@/lib/som";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -52,10 +53,25 @@ function Painel() {
   });
 
   React.useEffect(() => {
+    const liberar = () => liberarAudio();
+    window.addEventListener("pointerdown", liberar, { once: true });
+    return () => window.removeEventListener("pointerdown", liberar);
+  }, []);
+
+  React.useEffect(() => {
     const canal = supabase
       .channel("painel-pedidos")
       .on("postgres_changes", { event: "*", schema: "public", table: "pedidos" }, (payload) => {
-        if (payload.eventType === "INSERT") toast.success("Novo pedido recebido!");
+        if (payload.eventType === "INSERT") {
+          somNovoPedido();
+          toast.success("Novo pedido recebido!");
+        } else if (
+          payload.eventType === "UPDATE" &&
+          (payload.old as { status?: string } | null)?.status !==
+            (payload.new as { status?: string } | null)?.status
+        ) {
+          somMudancaStatus();
+        }
         void refetch();
       })
       .subscribe();
