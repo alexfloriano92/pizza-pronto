@@ -28,7 +28,6 @@ export const Route = createFileRoute("/auth")({
 
 function Auth() {
   const navigate = useNavigate();
-  const [modo, setModo] = React.useState<"entrar" | "criar">("entrar");
   const [email, setEmail] = React.useState("");
   const [senha, setSenha] = React.useState("");
   const [carregando, setCarregando] = React.useState(false);
@@ -43,34 +42,15 @@ function Auth() {
     e.preventDefault();
     setCarregando(true);
 
-    if (modo === "entrar") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
-      setCarregando(false);
-      if (error) {
-        toast.error("E-mail ou senha inválidos.");
-        return;
-      }
-      void navigate({ to: "/painel", replace: true });
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password: senha,
-      options: { emailRedirectTo: window.location.origin + "/auth" },
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
     setCarregando(false);
     if (error) {
-      toast.error(error.message);
-      return;
-    }
-    if (!data.session) {
-      toast.success("Conta criada! Confirme o e-mail para entrar.");
-      setModo("entrar");
+      toast.error("E-mail ou senha inválidos.");
       return;
     }
     void navigate({ to: "/painel", replace: true });
   }
+
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-4">
