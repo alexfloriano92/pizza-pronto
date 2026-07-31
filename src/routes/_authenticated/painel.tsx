@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const Route = createFileRoute("/painel")({
+export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
     meta: [
       { title: "Painel da cozinha — Pizza Frita" },

@@ -10,20 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as PainelRouteImport } from './routes/painel'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarrinhoRoute = CarrinhoRouteImport.update({
@@ -36,8 +31,13 @@ const CheckoutRoute = CheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PainelRoute = PainelRouteImport.update({
-  id: '/painel',
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/_authenticated/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
+  id: '/_authenticated/painel',
   path: '/painel',
   getParentRoute: () => rootRouteImport,
 } as any)
@@ -49,51 +49,51 @@ const PedidoIdRoute = PedidoIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
-  '/painel': typeof PainelRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/painel': typeof AuthenticatedPainelRoute
   '/pedido/$id': typeof PedidoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
-  '/painel': typeof PainelRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/painel': typeof AuthenticatedPainelRoute
   '/pedido/$id': typeof PedidoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
-  '/painel': typeof PainelRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/pedido/$id': typeof PedidoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/admin' | '/carrinho' | '/checkout' | '/painel' | '/pedido/$id'
+    '/' | '/carrinho' | '/checkout' | '/admin' | '/painel' | '/pedido/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/carrinho' | '/checkout' | '/painel' | '/pedido/$id'
+  to: '/' | '/carrinho' | '/checkout' | '/admin' | '/painel' | '/pedido/$id'
   id:
     | '__root__'
     | '/'
-    | '/admin'
     | '/carrinho'
     | '/checkout'
-    | '/painel'
+    | '/_authenticated/admin'
+    | '/_authenticated/painel'
     | '/pedido/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
   CarrinhoRoute: typeof CarrinhoRoute
   CheckoutRoute: typeof CheckoutRoute
-  PainelRoute: typeof PainelRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   PedidoIdRoute: typeof PedidoIdRoute
 }
 
@@ -104,13 +104,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carrinho': {
@@ -127,11 +120,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/painel': {
-      id: '/painel'
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/painel': {
+      id: '/_authenticated/painel'
       path: '/painel'
       fullPath: '/painel'
-      preLoaderRoute: typeof PainelRouteImport
+      preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pedido/$id': {
@@ -146,10 +146,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
   CarrinhoRoute: CarrinhoRoute,
   CheckoutRoute: CheckoutRoute,
-  PainelRoute: PainelRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   PedidoIdRoute: PedidoIdRoute,
 }
 export const routeTree = rootRouteImport
