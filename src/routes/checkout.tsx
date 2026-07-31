@@ -4,7 +4,13 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CabecalhoLoja } from "@/components/cabecalho-loja";
 import { useCarrinho } from "@/lib/carrinho";
-import { TAMANHO_LABEL, moeda, type Tamanho } from "@/lib/pedidos";
+import {
+  FORMA_PAGAMENTO_LABEL,
+  TAMANHO_LABEL,
+  moeda,
+  type FormaPagamento,
+  type Tamanho,
+} from "@/lib/pedidos";
 import { liberarAudio } from "@/lib/som";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -174,15 +180,75 @@ function PaginaCheckout() {
           </div>
 
           {tipoEntrega === "entrega" && (
+            <div className="mt-3 space-y-3">
+              <div className="grid grid-cols-3 gap-2">
+                <div className="col-span-2">
+                  <Label htmlFor="rua">Rua</Label>
+                  <Input id="rua" value={rua} onChange={(e) => setRua(e.target.value)} placeholder="Rua / Av." />
+                </div>
+                <div>
+                  <Label htmlFor="numero">Número</Label>
+                  <Input id="numero" value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="123" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label htmlFor="bairro">Bairro</Label>
+                  <Input id="bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} placeholder="Bairro" />
+                </div>
+                <div>
+                  <Label htmlFor="cidade">Cidade</Label>
+                  <Input id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Cidade" />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="complemento">Complemento (opcional)</Label>
+                <Textarea
+                  id="complemento"
+                  value={complemento}
+                  onChange={(e) => setComplemento(e.target.value)}
+                  placeholder="Apto, bloco, ponto de referência"
+                  rows={2}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Forma de pagamento
+          </h2>
+          <div className="grid grid-cols-3 gap-2">
+            {(["cartao", "pix", "dinheiro"] as const).map((op) => (
+              <button
+                key={op}
+                type="button"
+                onClick={() => setFormaPagamento(op)}
+                className={`rounded-xl border p-3 text-sm font-medium transition-colors ${
+                  formaPagamento === op
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border bg-card"
+                }`}
+              >
+                {FORMA_PAGAMENTO_LABEL[op]}
+              </button>
+            ))}
+          </div>
+
+          {formaPagamento === "dinheiro" && (
             <div className="mt-3">
-              <Label htmlFor="endereco">Endereço</Label>
-              <Textarea
-                id="endereco"
-                value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
-                placeholder="Rua, número, bairro, complemento"
-                rows={3}
+              <Label htmlFor="troco">Troco para</Label>
+              <Input
+                id="troco"
+                inputMode="decimal"
+                value={trocoPara}
+                onChange={(e) => setTrocoPara(e.target.value)}
+                placeholder={`Ex.: ${Math.ceil(valorTotal / 10) * 10}`}
               />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Deixe em branco se não precisar de troco.
+              </p>
             </div>
           )}
         </div>
