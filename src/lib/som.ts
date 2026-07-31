@@ -92,3 +92,13 @@ export function somBuzinaMoto() {
 export function liberarAudio() {
   contexto();
 }
+
+/** Vibração casada com a buzina — dois toques curtos. */
+export function vibrarEntrega() {
+  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") return;
+  try {
+    navigator.vibrate([320, 100, 500]);
+  } catch {
+    // dispositivo sem suporte real a vibração
+  }
+}
