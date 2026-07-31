@@ -268,11 +268,11 @@ function FormularioProduto({
 
     await supabase.from("precos_produto").delete().eq("produto_id", produtoId);
 
-    const linhas =
+    const linhas: { produto_id: string; tamanho: string | null; preco: number }[] =
       form.tipo === "pizza"
         ? TAMANHOS.map((t) => ({
             produto_id: produtoId as string,
-            tamanho: t,
+            tamanho: t as string | null,
             preco: Number(form.precos[t].replace(",", ".")) || 0,
           }))
         : [
@@ -282,6 +282,7 @@ function FormularioProduto({
               preco: Number(form.precos.unico.replace(",", ".")) || 0,
             },
           ];
+
 
     const { error: erroPrecos } = await supabase.from("precos_produto").insert(linhas);
     setSalvando(false);
