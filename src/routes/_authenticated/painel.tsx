@@ -10,6 +10,7 @@ import {
   TAMANHO_LABEL,
   moeda,
   proximoStatus,
+  FORMA_PAGAMENTO_LABEL,
   type ItemPedido,
   type Pedido,
   type StatusPedido,

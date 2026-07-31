@@ -32,7 +32,13 @@ function PaginaCheckout() {
   const [nome, setNome] = React.useState("");
   const [telefone, setTelefone] = React.useState("");
   const [tipoEntrega, setTipoEntrega] = React.useState<"retirada" | "entrega">("entrega");
-  const [endereco, setEndereco] = React.useState("");
+  const [rua, setRua] = React.useState("");
+  const [numero, setNumero] = React.useState("");
+  const [bairro, setBairro] = React.useState("");
+  const [cidade, setCidade] = React.useState("");
+  const [complemento, setComplemento] = React.useState("");
+  const [formaPagamento, setFormaPagamento] = React.useState<FormaPagamento>("pix");
+  const [trocoPara, setTrocoPara] = React.useState("");
   const [enviando, setEnviando] = React.useState(false);
 
   async function confirmar(e: React.FormEvent) {
@@ -43,10 +49,31 @@ function PaginaCheckout() {
       toast.error("Seu carrinho está vazio.");
       return;
     }
-    if (tipoEntrega === "entrega" && !endereco.trim()) {
-      toast.error("Informe o endereço de entrega.");
+    if (
+      tipoEntrega === "entrega" &&
+      (!rua.trim() || !numero.trim() || !bairro.trim() || !cidade.trim())
+    ) {
+      toast.error("Informe rua, número, bairro e cidade.");
       return;
     }
+
+    const troco = formaPagamento === "dinheiro" ? Number(trocoPara.replace(",", ".")) : null;
+    if (formaPagamento === "dinheiro" && trocoPara.trim() && (!troco || troco < valorTotal)) {
+      toast.error("O valor para troco deve ser maior ou igual ao total.");
+      return;
+    }
+
+    const enderecoCompleto =
+      tipoEntrega === "entrega"
+        ? [
+            `${rua.trim()}, ${numero.trim()}`,
+            bairro.trim(),
+            cidade.trim(),
+            complemento.trim(),
+          ]
+            .filter(Boolean)
+            .join(" - ")
+        : null;
 
     setEnviando(true);
     const novoId = crypto.randomUUID();
@@ -57,7 +84,9 @@ function PaginaCheckout() {
         cliente_nome: nome.trim(),
         cliente_telefone: telefone.trim(),
         tipo_entrega: tipoEntrega,
-        endereco: tipoEntrega === "entrega" ? endereco.trim() : null,
+        endereco: enderecoCompleto,
+        forma_pagamento: formaPagamento,
+        troco_para: formaPagamento === "dinheiro" && troco ? troco : null,
         itens: itens.map(({ key: _key, imagem_url: _img, ...resto }) => resto),
         valor_total: valorTotal,
       });
@@ -71,6 +100,7 @@ function PaginaCheckout() {
     limpar();
     navigate({ to: "/pedido/$id", params: { id: novoId } });
   }
+
 
 
   if (itens.length === 0) {
