@@ -14,7 +14,7 @@ import {
   type StatusPedido,
   type Tamanho,
 } from "@/lib/pedidos";
-import { somMudancaStatus, somBuzinaMoto } from "@/lib/som";
+import { somMudancaStatus, somBuzinaMoto, vibrarEntrega } from "@/lib/som";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
