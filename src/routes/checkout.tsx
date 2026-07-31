@@ -36,6 +36,8 @@ function PaginaCheckout() {
 
   async function confirmar(e: React.FormEvent) {
     e.preventDefault();
+    liberarAudio();
+
     if (itens.length === 0) {
       toast.error("Seu carrinho está vazio.");
       return;
