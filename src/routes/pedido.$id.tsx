@@ -56,6 +56,13 @@ function AcompanharPedido() {
     "default",
   );
   const statusAnterior = React.useRef<StatusPedido | null>(null);
+  const [aviso, setAviso] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!aviso) return;
+    const t = setTimeout(() => setAviso(null), 12000);
+    return () => clearTimeout(t);
+  }, [aviso]);
 
   const queryClient = useQueryClient();
 
