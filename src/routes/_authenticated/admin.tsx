@@ -110,7 +110,18 @@ function Admin() {
             <Link to="/" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
               Cardápio
             </Link>
+            <button
+              type="button"
+              className="rounded-lg bg-primary-foreground/15 px-3 py-2"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = "/auth";
+              }}
+            >
+              Sair
+            </button>
           </div>
+
         </div>
       </header>
 
