@@ -288,14 +288,30 @@ function FormularioProduto({
   const [form, setForm] = React.useState<Rascunho | null>(rascunho);
   const [salvando, setSalvando] = React.useState(false);
   const [enviando, setEnviando] = React.useState(false);
+  const [arrastando, setArrastando] = React.useState(false);
+  const [erroImagem, setErroImagem] = React.useState<string | null>(null);
 
   React.useEffect(() => setForm(rascunho), [rascunho]);
 
+  function validarImagem(arquivo: File): string | null {
+    if (!TIPOS_IMAGEM.includes(arquivo.type)) {
+      return "Formato não aceito. Use JPG, PNG, WEBP ou GIF.";
+    }
+    if (arquivo.size > TAMANHO_MAX_IMAGEM) {
+      const mb = (arquivo.size / (1024 * 1024)).toFixed(1).replace(".", ",");
+      return `Imagem de ${mb} MB — o limite é 5 MB. Reduza a foto e tente novamente.`;
+    }
+    return null;
+  }
+
   async function enviarFoto(arquivo: File) {
-    if (arquivo.size > 5 * 1024 * 1024) {
-      toast.error("Imagem muito grande (máx. 5 MB).");
+    const problema = validarImagem(arquivo);
+    if (problema) {
+      setErroImagem(problema);
+      toast.error(problema);
       return;
     }
+    setErroImagem(null);
     setEnviando(true);
     try {
       const caminho = await enviarImagemProduto(arquivo);
@@ -303,13 +319,29 @@ function FormularioProduto({
       setForm((atual) => (atual ? { ...atual, imagem_url: caminho, previa } : atual));
       toast.success("Foto enviada!");
     } catch {
+      setErroImagem("Não foi possível enviar a imagem. Tente novamente.");
       toast.error("Não foi possível enviar a imagem.");
     } finally {
       setEnviando(false);
     }
   }
 
+  function soltarArquivo(e: React.DragEvent) {
+    e.preventDefault();
+    setArrastando(false);
+    if (enviando) return;
+    const arquivos = Array.from(e.dataTransfer.files ?? []);
+    if (arquivos.length === 0) return;
+    if (arquivos.length > 1) {
+      setErroImagem("Solte apenas uma imagem por vez.");
+      toast.error("Solte apenas uma imagem por vez.");
+      return;
+    }
+    void enviarFoto(arquivos[0]!);
+  }
+
   if (!form) return null;
+
 
   const temFoto = !!form.imagem_url.trim() && form.imagem_url.trim() !== IMAGEM_FALLBACK;
 
