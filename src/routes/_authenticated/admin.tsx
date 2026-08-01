@@ -46,6 +46,8 @@ type Rascunho = {
 };
 
 const TAMANHOS: Tamanho[] = ["pequena", "media", "grande"];
+const TAMANHO_MAX_IMAGEM = 5 * 1024 * 1024;
+const TIPOS_IMAGEM = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 function rascunhoVazio(tipo: "pizza" | "bebida"): Rascunho {
   return {
@@ -288,14 +290,30 @@ function FormularioProduto({
   const [form, setForm] = React.useState<Rascunho | null>(rascunho);
   const [salvando, setSalvando] = React.useState(false);
   const [enviando, setEnviando] = React.useState(false);
+  const [arrastando, setArrastando] = React.useState(false);
+  const [erroImagem, setErroImagem] = React.useState<string | null>(null);
 
   React.useEffect(() => setForm(rascunho), [rascunho]);
 
+  function validarImagem(arquivo: File): string | null {
+    if (!TIPOS_IMAGEM.includes(arquivo.type)) {
+      return "Formato não aceito. Use JPG, PNG, WEBP ou GIF.";
+    }
+    if (arquivo.size > TAMANHO_MAX_IMAGEM) {
+      const mb = (arquivo.size / (1024 * 1024)).toFixed(1).replace(".", ",");
+      return `Imagem de ${mb} MB — o limite é 5 MB. Reduza a foto e tente novamente.`;
+    }
+    return null;
+  }
+
   async function enviarFoto(arquivo: File) {
-    if (arquivo.size > 5 * 1024 * 1024) {
-      toast.error("Imagem muito grande (máx. 5 MB).");
+    const problema = validarImagem(arquivo);
+    if (problema) {
+      setErroImagem(problema);
+      toast.error(problema);
       return;
     }
+    setErroImagem(null);
     setEnviando(true);
     try {
       const caminho = await enviarImagemProduto(arquivo);
@@ -303,13 +321,29 @@ function FormularioProduto({
       setForm((atual) => (atual ? { ...atual, imagem_url: caminho, previa } : atual));
       toast.success("Foto enviada!");
     } catch {
+      setErroImagem("Não foi possível enviar a imagem. Tente novamente.");
       toast.error("Não foi possível enviar a imagem.");
     } finally {
       setEnviando(false);
     }
   }
 
+  function soltarArquivo(e: React.DragEvent) {
+    e.preventDefault();
+    setArrastando(false);
+    if (enviando) return;
+    const arquivos = Array.from(e.dataTransfer.files ?? []);
+    if (arquivos.length === 0) return;
+    if (arquivos.length > 1) {
+      setErroImagem("Solte apenas uma imagem por vez.");
+      toast.error("Solte apenas uma imagem por vez.");
+      return;
+    }
+    void enviarFoto(arquivos[0]!);
+  }
+
   if (!form) return null;
+
 
   const temFoto = !!form.imagem_url.trim() && form.imagem_url.trim() !== IMAGEM_FALLBACK;
 
@@ -407,7 +441,21 @@ function FormularioProduto({
           </div>
           <div>
             <Label htmlFor="imagem">Foto do produto</Label>
-            <div className="mt-1 flex items-center gap-3">
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (!enviando) setArrastando(true);
+              }}
+              onDragLeave={() => setArrastando(false)}
+              onDrop={soltarArquivo}
+              className={`mt-1 flex items-center gap-3 rounded-xl border-2 border-dashed p-3 transition-colors ${
+                arrastando
+                  ? "border-primary bg-primary/5"
+                  : erroImagem
+                    ? "border-destructive/60"
+                    : "border-border"
+              }`}
+            >
               <img
                 src={form.previa || IMAGEM_FALLBACK}
                 alt="Prévia da imagem"
@@ -417,7 +465,7 @@ function FormularioProduto({
                 <input
                   id="imagem"
                   type="file"
-                  accept="image/*"
+                  accept={TIPOS_IMAGEM.join(",")}
                   className="hidden"
                   onChange={(e) => {
                     const arquivo = e.target.files?.[0];
@@ -444,11 +492,12 @@ function FormularioProduto({
                       type="button"
                       variant="ghost"
                       disabled={enviando}
-                      onClick={() =>
+                      onClick={() => {
+                        setErroImagem(null);
                         setForm((atual) =>
                           atual ? { ...atual, imagem_url: "", previa: "" } : atual,
-                        )
-                      }
+                        );
+                      }}
                     >
                       <Trash2 className="size-4" />
                       Remover foto
@@ -456,11 +505,20 @@ function FormularioProduto({
                   ) : null}
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  JPG ou PNG, até 5 MB. Sem foto usamos uma imagem padrão. Fotos antigas continuam
-                  guardadas — pedidos já feitos não são afetados.
+                  {arrastando
+                    ? "Solte a imagem aqui."
+                    : "Arraste uma foto aqui ou clique no botão. JPG, PNG, WEBP ou GIF, até 5 MB."}
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  Sem foto usamos uma imagem padrão. Fotos antigas continuam guardadas — pedidos já
+                  feitos não são afetados.
+                </p>
+                {erroImagem ? (
+                  <p className="mt-1 text-xs font-medium text-destructive">{erroImagem}</p>
+                ) : null}
               </div>
             </div>
+
           </div>
 
 
