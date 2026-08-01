@@ -28,16 +28,22 @@ export async function resolverImagens(valores: (string | null)[]): Promise<(stri
   return valores.map((v) => (v && !ehUrlExterna(v) ? (mapa.get(v) ?? null) : v));
 }
 
-/** Envia uma imagem para o bucket e devolve o caminho salvo no produto. */
+/** Otimiza (redimensiona + comprime) e envia a imagem, devolvendo o caminho salvo no produto. */
 export async function enviarImagemProduto(arquivo: File): Promise<string> {
-  const extensao = (arquivo.name.split(".").pop() ?? "jpg").toLowerCase();
+  const otimizado = await otimizarImagem(arquivo);
+  const extensao = (otimizado.name.split(".").pop() ?? "jpg").toLowerCase();
   const caminho = `${crypto.randomUUID()}.${extensao}`;
   const { error } = await supabase.storage
     .from(BUCKET_PRODUTOS)
-    .upload(caminho, arquivo, { cacheControl: "3600", upsert: false });
+    .upload(caminho, otimizado, {
+      cacheControl: "31536000",
+      upsert: false,
+      contentType: otimizado.type || undefined,
+    });
   if (error) throw error;
   return caminho;
 }
+
 
 export async function urlAssinada(caminho: string): Promise<string | null> {
   const [url] = await resolverImagens([caminho]);
