@@ -2,11 +2,12 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Lock } from "lucide-react";
+import { Lock, StoreIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buscarProdutos, precosOrdenados } from "@/lib/consultas";
 import { IMAGEM_FALLBACK, TAMANHO_LABEL, moeda, type Produto, type Tamanho } from "@/lib/pedidos";
 import { useCarrinho } from "@/lib/carrinho";
+import { MENSAGEM_FECHADA_PADRAO, useConfigLoja } from "@/lib/loja";
 import { CabecalhoLoja } from "@/components/cabecalho-loja";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +42,8 @@ export const Route = createFileRoute("/")({
 
 function Cardapio() {
   const [selecionado, setSelecionado] = React.useState<Produto | null>(null);
+  const { data: config } = useConfigLoja();
+  const fechada = config ? !config.aberta : false;
 
   const { data: produtos, isLoading, refetch } = useQuery({
     queryKey: ["cardapio"],
@@ -67,6 +70,18 @@ function Cardapio() {
 
   return (
     <CabecalhoLoja>
+      {fechada && (
+        <div className="mb-4 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
+          <StoreIcon className="mt-0.5 size-5 shrink-0 text-destructive" />
+          <div>
+            <p className="font-bold text-destructive">Estamos fechados</p>
+            <p className="text-sm text-muted-foreground">
+              {config?.mensagem?.trim() || MENSAGEM_FECHADA_PADRAO}
+            </p>
+          </div>
+        </div>
+      )}
+
       <section className="mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-accent px-5 py-6 text-primary-foreground">
         <h1 className="text-2xl font-extrabold leading-tight">
           Pizza frita feita na hora
@@ -101,7 +116,11 @@ function Cardapio() {
         </Link>
       </p>
 
-      <DialogProduto produto={selecionado} onClose={() => setSelecionado(null)} />
+      <DialogProduto
+        produto={selecionado}
+        fechada={fechada}
+        onClose={() => setSelecionado(null)}
+      />
     </CabecalhoLoja>
   );
 }
@@ -152,7 +171,15 @@ function SecaoProdutos({
   );
 }
 
-function DialogProduto({ produto, onClose }: { produto: Produto | null; onClose: () => void }) {
+function DialogProduto({
+  produto,
+  fechada,
+  onClose,
+}: {
+  produto: Produto | null;
+  fechada: boolean;
+  onClose: () => void;
+}) {
   const { adicionar } = useCarrinho();
   const [tamanho, setTamanho] = React.useState<Tamanho | null>(null);
   const [obs, setObs] = React.useState("");
@@ -225,7 +252,7 @@ function DialogProduto({ produto, onClose }: { produto: Produto | null; onClose:
 
         <Button
           size="lg"
-          disabled={produto.tipo === "pizza" && !tamanho}
+          disabled={fechada || (produto.tipo === "pizza" && !tamanho)}
           onClick={() => {
             adicionar({
               produto_id: produto.id,
@@ -241,7 +268,9 @@ function DialogProduto({ produto, onClose }: { produto: Produto | null; onClose:
             onClose();
           }}
         >
-          Adicionar ao carrinho · {moeda(precoAtual)}
+          {fechada
+            ? "Loja fechada no momento"
+            : `Adicionar ao carrinho · ${moeda(precoAtual)}`}
         </Button>
       </DialogContent>
     </Dialog>

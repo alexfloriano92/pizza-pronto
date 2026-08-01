@@ -12,6 +12,7 @@ import {
   type Tamanho,
 } from "@/lib/pedidos";
 import { liberarAudio } from "@/lib/som";
+import { MENSAGEM_FECHADA_PADRAO, useConfigLoja } from "@/lib/loja";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,11 +47,17 @@ function PaginaCheckout() {
   const [formaPagamento, setFormaPagamento] = React.useState<FormaPagamento>("pix");
   const [trocoPara, setTrocoPara] = React.useState("");
   const [enviando, setEnviando] = React.useState(false);
+  const { data: config } = useConfigLoja();
+  const fechada = config ? !config.aberta : false;
 
   async function confirmar(e: React.FormEvent) {
     e.preventDefault();
     liberarAudio();
 
+    if (fechada) {
+      toast.error("A pizzaria está fechada e não está recebendo pedidos.");
+      return;
+    }
     if (itens.length === 0) {
       toast.error("Seu carrinho está vazio.");
       return;
@@ -276,8 +283,14 @@ function PaginaCheckout() {
           </div>
         </div>
 
-        <Button type="submit" size="lg" className="w-full" disabled={enviando}>
-          {enviando ? "Enviando..." : "Confirmar pedido"}
+        {fechada && (
+          <p className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            {config?.mensagem?.trim() || MENSAGEM_FECHADA_PADRAO}
+          </p>
+        )}
+
+        <Button type="submit" size="lg" className="w-full" disabled={enviando || fechada}>
+          {fechada ? "Fechado no momento" : enviando ? "Enviando..." : "Confirmar pedido"}
         </Button>
       </form>
     </CabecalhoLoja>
