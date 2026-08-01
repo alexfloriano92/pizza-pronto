@@ -1,12 +1,21 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { MapPin, Clock, Phone, User, ArrowLeft, Navigation } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { MapPin, Clock, Phone, User, ArrowLeft, Navigation, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CabecalhoLoja } from "@/components/cabecalho-loja";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { moeda, type ItemPedido, type Pedido, TAMANHO_LABEL, type Tamanho } from "@/lib/pedidos";
+import {
+  moeda,
+  type ItemPedido,
+  type Pedido,
+  type StatusPedido,
+  STATUS_LABEL,
+  TAMANHO_LABEL,
+  type Tamanho,
+} from "@/lib/pedidos";
+
 
 export const Route = createFileRoute("/rastreio/$id")({
   head: () => ({
