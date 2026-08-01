@@ -1,8 +1,8 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ImagePlus, Loader2, Pencil, Plus, Store, StoreIcon } from "lucide-react";
+import { ImagePlus, Loader2, Pencil, Plus, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buscarProdutos, enviarImagemProduto, precosOrdenados, urlAssinada } from "@/lib/consultas";
 import { useConfigLoja } from "@/lib/loja";
@@ -167,6 +167,47 @@ function Admin() {
           setRascunho(null);
           void refetch();
         }}
+      />
+    </div>
+  );
+}
+
+function ChaveLoja() {
+  const { data: config, isLoading } = useConfigLoja();
+  const queryClient = useQueryClient();
+  const [salvando, setSalvando] = React.useState(false);
+
+  async function alternar(valor: boolean) {
+    if (!config) return;
+    setSalvando(true);
+    const { error } = await supabase
+      .from("configuracao_loja")
+      .update({ aberta: valor })
+      .eq("id", config.id);
+    setSalvando(false);
+    if (error) {
+      toast.error("Não foi possível alterar o estado da loja.");
+      return;
+    }
+    void queryClient.invalidateQueries({ queryKey: ["config-loja"] });
+    toast.success(valor ? "Loja aberta — recebendo pedidos." : "Loja fechada — pedidos pausados.");
+  }
+
+  if (isLoading || !config) return null;
+
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
+        config.aberta ? "bg-primary-foreground/15" : "bg-destructive/90 text-destructive-foreground"
+      }`}
+    >
+      <Store className="size-4" />
+      <span className="font-semibold">{config.aberta ? "Aberta" : "Fechada"}</span>
+      <Switch
+        checked={config.aberta}
+        disabled={salvando}
+        onCheckedChange={(v) => void alternar(v)}
+        aria-label="Abrir ou fechar o estabelecimento"
       />
     </div>
   );
