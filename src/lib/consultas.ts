@@ -39,7 +39,7 @@ export async function enviarImagemProduto(arquivo: File): Promise<string> {
     .upload(caminho, otimizado, {
       cacheControl: "31536000",
       upsert: false,
-      contentType: otimizado.type || undefined,
+      contentType: otimizado.type || "image/jpeg",
     });
   if (error) throw error;
   return caminho;
