@@ -441,7 +441,21 @@ function FormularioProduto({
           </div>
           <div>
             <Label htmlFor="imagem">Foto do produto</Label>
-            <div className="mt-1 flex items-center gap-3">
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (!enviando) setArrastando(true);
+              }}
+              onDragLeave={() => setArrastando(false)}
+              onDrop={soltarArquivo}
+              className={`mt-1 flex items-center gap-3 rounded-xl border-2 border-dashed p-3 transition-colors ${
+                arrastando
+                  ? "border-primary bg-primary/5"
+                  : erroImagem
+                    ? "border-destructive/60"
+                    : "border-border"
+              }`}
+            >
               <img
                 src={form.previa || IMAGEM_FALLBACK}
                 alt="Prévia da imagem"
@@ -451,7 +465,7 @@ function FormularioProduto({
                 <input
                   id="imagem"
                   type="file"
-                  accept="image/*"
+                  accept={TIPOS_IMAGEM.join(",")}
                   className="hidden"
                   onChange={(e) => {
                     const arquivo = e.target.files?.[0];
@@ -478,11 +492,12 @@ function FormularioProduto({
                       type="button"
                       variant="ghost"
                       disabled={enviando}
-                      onClick={() =>
+                      onClick={() => {
+                        setErroImagem(null);
                         setForm((atual) =>
                           atual ? { ...atual, imagem_url: "", previa: "" } : atual,
-                        )
-                      }
+                        );
+                      }}
                     >
                       <Trash2 className="size-4" />
                       Remover foto
@@ -490,11 +505,20 @@ function FormularioProduto({
                   ) : null}
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  JPG ou PNG, até 5 MB. Sem foto usamos uma imagem padrão. Fotos antigas continuam
-                  guardadas — pedidos já feitos não são afetados.
+                  {arrastando
+                    ? "Solte a imagem aqui."
+                    : "Arraste uma foto aqui ou clique no botão. JPG, PNG, WEBP ou GIF, até 5 MB."}
                 </p>
+                <p className="text-xs text-muted-foreground">
+                  Sem foto usamos uma imagem padrão. Fotos antigas continuam guardadas — pedidos já
+                  feitos não são afetados.
+                </p>
+                {erroImagem ? (
+                  <p className="mt-1 text-xs font-medium text-destructive">{erroImagem}</p>
+                ) : null}
               </div>
             </div>
+
           </div>
 
 
