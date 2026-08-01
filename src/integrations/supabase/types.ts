@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      configuracao_loja: {
+        Row: {
+          aberta: boolean
+          atualizado_em: string
+          criado_em: string
+          id: string
+          mensagem: string
+        }
+        Insert: {
+          aberta?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          mensagem?: string
+        }
+        Update: {
+          aberta?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          mensagem?: string
+        }
+        Relationships: []
+      }
       pedidos: {
         Row: {
           atualizado_em: string

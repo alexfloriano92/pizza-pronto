@@ -1,10 +1,11 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Pencil, Plus } from "lucide-react";
+import { ImagePlus, Loader2, Pencil, Plus, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { buscarProdutos, precosOrdenados } from "@/lib/consultas";
+import { buscarProdutos, enviarImagemProduto, precosOrdenados, urlAssinada } from "@/lib/consultas";
+import { useConfigLoja } from "@/lib/loja";
 import { IMAGEM_FALLBACK, TAMANHO_LABEL, moeda, type Produto, type Tamanho } from "@/lib/pedidos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +40,7 @@ type Rascunho = {
   nome: string;
   descricao: string;
   imagem_url: string;
+  previa: string;
   disponivel: boolean;
   precos: { pequena: string; media: string; grande: string; unico: string };
 };
@@ -51,6 +53,7 @@ function rascunhoVazio(tipo: "pizza" | "bebida"): Rascunho {
     nome: "",
     descricao: "",
     imagem_url: "",
+    previa: "",
     disponivel: true,
     precos: { pequena: "", media: "", grande: "", unico: "" },
   };
@@ -64,7 +67,8 @@ function paraRascunho(p: Produto): Rascunho {
     tipo: p.tipo,
     nome: p.nome,
     descricao: p.descricao,
-    imagem_url: p.imagem_url ?? "",
+    imagem_url: p.imagem_ref ?? "",
+    previa: p.imagem_url ?? "",
     disponivel: p.disponivel,
     precos: {
       pequena: buscar("pequena"),
@@ -103,7 +107,8 @@ function Admin() {
             <h1 className="text-2xl font-extrabold tracking-tight">Cadastro de produtos</h1>
             <p className="text-sm opacity-85">Alterações refletem no cardápio na hora</p>
           </div>
-          <div className="flex gap-2 text-sm">
+          <div className="flex items-center gap-2 text-sm">
+            <ChaveLoja />
             <Link to="/painel" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
               Painel
             </Link>
@@ -162,6 +167,47 @@ function Admin() {
           setRascunho(null);
           void refetch();
         }}
+      />
+    </div>
+  );
+}
+
+function ChaveLoja() {
+  const { data: config, isLoading } = useConfigLoja();
+  const queryClient = useQueryClient();
+  const [salvando, setSalvando] = React.useState(false);
+
+  async function alternar(valor: boolean) {
+    if (!config) return;
+    setSalvando(true);
+    const { error } = await supabase
+      .from("configuracao_loja")
+      .update({ aberta: valor })
+      .eq("id", config.id);
+    setSalvando(false);
+    if (error) {
+      toast.error("Não foi possível alterar o estado da loja.");
+      return;
+    }
+    void queryClient.invalidateQueries({ queryKey: ["config-loja"] });
+    toast.success(valor ? "Loja aberta — recebendo pedidos." : "Loja fechada — pedidos pausados.");
+  }
+
+  if (isLoading || !config) return null;
+
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-lg px-3 py-2 ${
+        config.aberta ? "bg-primary-foreground/15" : "bg-destructive/90 text-destructive-foreground"
+      }`}
+    >
+      <Store className="size-4" />
+      <span className="font-semibold">{config.aberta ? "Aberta" : "Fechada"}</span>
+      <Switch
+        checked={config.aberta}
+        disabled={salvando}
+        onCheckedChange={(v) => void alternar(v)}
+        aria-label="Abrir ou fechar o estabelecimento"
       />
     </div>
   );
@@ -241,8 +287,27 @@ function FormularioProduto({
 }) {
   const [form, setForm] = React.useState<Rascunho | null>(rascunho);
   const [salvando, setSalvando] = React.useState(false);
+  const [enviando, setEnviando] = React.useState(false);
 
   React.useEffect(() => setForm(rascunho), [rascunho]);
+
+  async function enviarFoto(arquivo: File) {
+    if (arquivo.size > 5 * 1024 * 1024) {
+      toast.error("Imagem muito grande (máx. 5 MB).");
+      return;
+    }
+    setEnviando(true);
+    try {
+      const caminho = await enviarImagemProduto(arquivo);
+      const previa = (await urlAssinada(caminho)) ?? "";
+      setForm((atual) => (atual ? { ...atual, imagem_url: caminho, previa } : atual));
+      toast.success("Foto enviada!");
+    } catch {
+      toast.error("Não foi possível enviar a imagem.");
+    } finally {
+      setEnviando(false);
+    }
+  }
 
   if (!form) return null;
 
@@ -337,13 +402,43 @@ function FormularioProduto({
             />
           </div>
           <div>
-            <Label htmlFor="imagem">URL da imagem</Label>
-            <Input
-              id="imagem"
-              placeholder="https://..."
-              value={form.imagem_url}
-              onChange={(e) => setForm({ ...form, imagem_url: e.target.value })}
-            />
+            <Label htmlFor="imagem">Foto do produto</Label>
+            <div className="mt-1 flex items-center gap-3">
+              <img
+                src={form.previa || IMAGEM_FALLBACK}
+                alt="Prévia da imagem"
+                className="size-20 shrink-0 rounded-xl border border-border object-cover"
+              />
+              <div className="flex-1">
+                <input
+                  id="imagem"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const arquivo = e.target.files?.[0];
+                    e.target.value = "";
+                    if (arquivo) void enviarFoto(arquivo);
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={enviando}
+                  onClick={() => document.getElementById("imagem")?.click()}
+                >
+                  {enviando ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <ImagePlus className="size-4" />
+                  )}
+                  {form.imagem_url ? "Trocar foto" : "Enviar foto"}
+                </Button>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  JPG ou PNG, até 5 MB. Sem foto usamos uma imagem padrão.
+                </p>
+              </div>
+            </div>
           </div>
 
           {form.tipo === "pizza" ? (
