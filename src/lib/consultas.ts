@@ -75,7 +75,11 @@ export async function buscarProdutos(apenasDisponiveis: boolean): Promise<Produt
   });
 
   const imagens = await resolverImagens(linhas.map((l) => l.imagem_url));
-  return linhas.map((l, i) => ({ ...l, imagem_url: imagens[i] ?? null }));
+  return linhas.map((l, i) => ({
+    ...l,
+    imagem_ref: l.imagem_url,
+    imagem_url: imagens[i] ?? null,
+  }));
 }
 
 export const ORDEM_TAMANHO = ["pequena", "media", "grande"] as const;
