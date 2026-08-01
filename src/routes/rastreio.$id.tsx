@@ -50,12 +50,49 @@ async function buscarPedido(id: string): Promise<Pedido | null> {
 
 function RastreamentoEntrega() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
+  const [aoVivo, setAoVivo] = React.useState(false);
+  const [ultimaAtualizacao, setUltimaAtualizacao] = React.useState<Date | null>(null);
 
-  const { data: pedido, isLoading } = useQuery({
+  const { data: pedido, isLoading, refetch } = useQuery({
     queryKey: ["pedido", id],
     queryFn: () => buscarPedido(id),
     refetchOnWindowFocus: true,
   });
+
+  // Tempo real: o banco emite broadcast no canal do pedido a cada mudança de status.
+  React.useEffect(() => {
+    const canal = supabase
+      .channel(`pedido-${id.replace(/-/g, "")}`)
+      .on("broadcast", { event: "status" }, (mensagem) => {
+        const novo =
+          (mensagem["payload"] as { record?: { status?: StatusPedido } })?.record?.status ??
+          (mensagem["payload"] as { status?: StatusPedido })?.status;
+        setUltimaAtualizacao(new Date());
+        if (!novo) {
+          void refetch();
+          return;
+        }
+        queryClient.setQueryData(["pedido", id], (atual: Pedido | null | undefined) =>
+          atual ? { ...atual, status: novo } : atual,
+        );
+      })
+      .subscribe((estado) => setAoVivo(estado === "SUBSCRIBED"));
+
+    return () => {
+      setAoVivo(false);
+      void supabase.removeChannel(canal);
+    };
+  }, [id, queryClient, refetch]);
+
+  React.useEffect(() => {
+    function aoVoltar() {
+      if (document.visibilityState === "visible") void refetch();
+    }
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => document.removeEventListener("visibilitychange", aoVoltar);
+  }, [refetch]);
+
 
   if (isLoading) {
     return (
