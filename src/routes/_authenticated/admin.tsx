@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ImagePlus, Loader2, Pencil, Plus, Store } from "lucide-react";
+import { ImagePlus, Loader2, Pencil, Plus, Store, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buscarProdutos, enviarImagemProduto, precosOrdenados, urlAssinada } from "@/lib/consultas";
 import { useConfigLoja } from "@/lib/loja";
@@ -311,6 +311,10 @@ function FormularioProduto({
 
   if (!form) return null;
 
+  const temFoto = !!form.imagem_url.trim() && form.imagem_url.trim() !== IMAGEM_FALLBACK;
+
+
+
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
     if (!form) return;
@@ -421,25 +425,44 @@ function FormularioProduto({
                     if (arquivo) void enviarFoto(arquivo);
                   }}
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={enviando}
-                  onClick={() => document.getElementById("imagem")?.click()}
-                >
-                  {enviando ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <ImagePlus className="size-4" />
-                  )}
-                  {form.imagem_url ? "Trocar foto" : "Enviar foto"}
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={enviando}
+                    onClick={() => document.getElementById("imagem")?.click()}
+                  >
+                    {enviando ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <ImagePlus className="size-4" />
+                    )}
+                    {temFoto ? "Trocar foto" : "Enviar foto"}
+                  </Button>
+                  {temFoto ? (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      disabled={enviando}
+                      onClick={() =>
+                        setForm((atual) =>
+                          atual ? { ...atual, imagem_url: "", previa: "" } : atual,
+                        )
+                      }
+                    >
+                      <Trash2 className="size-4" />
+                      Remover foto
+                    </Button>
+                  ) : null}
+                </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  JPG ou PNG, até 5 MB. Sem foto usamos uma imagem padrão.
+                  JPG ou PNG, até 5 MB. Sem foto usamos uma imagem padrão. Fotos antigas continuam
+                  guardadas — pedidos já feitos não são afetados.
                 </p>
               </div>
             </div>
           </div>
+
 
           {form.tipo === "pizza" ? (
             <div className="grid grid-cols-3 gap-2">
