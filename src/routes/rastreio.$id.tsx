@@ -119,6 +119,7 @@ function RastreamentoEntrega() {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     pedido.endereco ?? "",
   )}`;
+  const entregue = pedido.status === "entregue";
 
   return (
     <CabecalhoLoja>
@@ -131,13 +132,37 @@ function RastreamentoEntrega() {
 
       <div className="rounded-2xl border-2 border-primary bg-primary/10 p-5 text-center">
         <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
-          <Navigation className="size-7" />
+          {entregue ? <CheckCircle2 className="size-7" /> : <Navigation className="size-7" />}
         </div>
-        <h1 className="mt-3 text-lg font-bold text-foreground">Saiu para entrega</h1>
+        <h1 className="mt-3 text-lg font-bold text-foreground">
+          {STATUS_LABEL[pedido.status]}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Seu pedido <span className="font-mono font-bold text-primary">{codigoPedido}</span> está a caminho
+          Seu pedido <span className="font-mono font-bold text-primary">{codigoPedido}</span>{" "}
+          {entregue ? "foi entregue. Bom apetite!" : "está a caminho"}
         </p>
+
+        <div className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <span
+            className={`relative flex size-2 ${aoVivo ? "" : "opacity-40"}`}
+            aria-hidden="true"
+          >
+            {aoVivo && (
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+            )}
+            <span className="relative inline-flex size-2 rounded-full bg-primary" />
+          </span>
+          <span>
+            {aoVivo ? "Acompanhamento ao vivo" : "Reconectando..."}
+            {ultimaAtualizacao &&
+              ` • atualizado às ${ultimaAtualizacao.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}`}
+          </span>
+        </div>
       </div>
+
 
       <section className="mt-5 rounded-2xl border border-border bg-card p-4 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
