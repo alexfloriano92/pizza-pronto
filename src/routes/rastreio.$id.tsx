@@ -119,7 +119,7 @@ function RastreamentoEntrega() {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     pedido.endereco ?? "",
   )}`;
-  const entregue = pedido.status === "entregue";
+  const entregue = pedido.status === "finalizado";
 
   return (
     <CabecalhoLoja>
