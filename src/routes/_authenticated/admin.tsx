@@ -311,6 +311,10 @@ function FormularioProduto({
 
   if (!form) return null;
 
+  const temFoto = !!form.imagem_url.trim() && form.imagem_url.trim() !== IMAGEM_FALLBACK;
+
+
+
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
     if (!form) return;
