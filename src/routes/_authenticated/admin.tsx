@@ -46,6 +46,8 @@ type Rascunho = {
 };
 
 const TAMANHOS: Tamanho[] = ["pequena", "media", "grande"];
+const TAMANHO_MAX_IMAGEM = 5 * 1024 * 1024;
+const TIPOS_IMAGEM = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 function rascunhoVazio(tipo: "pizza" | "bebida"): Rascunho {
   return {
