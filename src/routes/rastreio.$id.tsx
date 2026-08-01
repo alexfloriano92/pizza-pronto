@@ -1,12 +1,21 @@
 import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { MapPin, Clock, Phone, User, ArrowLeft, Navigation } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { MapPin, Clock, Phone, User, ArrowLeft, Navigation, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CabecalhoLoja } from "@/components/cabecalho-loja";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { moeda, type ItemPedido, type Pedido, TAMANHO_LABEL, type Tamanho } from "@/lib/pedidos";
+import {
+  moeda,
+  type ItemPedido,
+  type Pedido,
+  type StatusPedido,
+  STATUS_LABEL,
+  TAMANHO_LABEL,
+  type Tamanho,
+} from "@/lib/pedidos";
+
 
 export const Route = createFileRoute("/rastreio/$id")({
   head: () => ({
@@ -41,12 +50,49 @@ async function buscarPedido(id: string): Promise<Pedido | null> {
 
 function RastreamentoEntrega() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
+  const [aoVivo, setAoVivo] = React.useState(false);
+  const [ultimaAtualizacao, setUltimaAtualizacao] = React.useState<Date | null>(null);
 
-  const { data: pedido, isLoading } = useQuery({
+  const { data: pedido, isLoading, refetch } = useQuery({
     queryKey: ["pedido", id],
     queryFn: () => buscarPedido(id),
     refetchOnWindowFocus: true,
   });
+
+  // Tempo real: o banco emite broadcast no canal do pedido a cada mudança de status.
+  React.useEffect(() => {
+    const canal = supabase
+      .channel(`pedido-${id.replace(/-/g, "")}`)
+      .on("broadcast", { event: "status" }, (mensagem) => {
+        const novo =
+          (mensagem["payload"] as { record?: { status?: StatusPedido } })?.record?.status ??
+          (mensagem["payload"] as { status?: StatusPedido })?.status;
+        setUltimaAtualizacao(new Date());
+        if (!novo) {
+          void refetch();
+          return;
+        }
+        queryClient.setQueryData(["pedido", id], (atual: Pedido | null | undefined) =>
+          atual ? { ...atual, status: novo } : atual,
+        );
+      })
+      .subscribe((estado) => setAoVivo(estado === "SUBSCRIBED"));
+
+    return () => {
+      setAoVivo(false);
+      void supabase.removeChannel(canal);
+    };
+  }, [id, queryClient, refetch]);
+
+  React.useEffect(() => {
+    function aoVoltar() {
+      if (document.visibilityState === "visible") void refetch();
+    }
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => document.removeEventListener("visibilitychange", aoVoltar);
+  }, [refetch]);
+
 
   if (isLoading) {
     return (
@@ -73,6 +119,7 @@ function RastreamentoEntrega() {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     pedido.endereco ?? "",
   )}`;
+  const entregue = pedido.status === "finalizado";
 
   return (
     <CabecalhoLoja>
@@ -85,13 +132,37 @@ function RastreamentoEntrega() {
 
       <div className="rounded-2xl border-2 border-primary bg-primary/10 p-5 text-center">
         <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
-          <Navigation className="size-7" />
+          {entregue ? <CheckCircle2 className="size-7" /> : <Navigation className="size-7" />}
         </div>
-        <h1 className="mt-3 text-lg font-bold text-foreground">Saiu para entrega</h1>
+        <h1 className="mt-3 text-lg font-bold text-foreground">
+          {STATUS_LABEL[pedido.status]}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Seu pedido <span className="font-mono font-bold text-primary">{codigoPedido}</span> está a caminho
+          Seu pedido <span className="font-mono font-bold text-primary">{codigoPedido}</span>{" "}
+          {entregue ? "foi entregue. Bom apetite!" : "está a caminho"}
         </p>
+
+        <div className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <span
+            className={`relative flex size-2 ${aoVivo ? "" : "opacity-40"}`}
+            aria-hidden="true"
+          >
+            {aoVivo && (
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
+            )}
+            <span className="relative inline-flex size-2 rounded-full bg-primary" />
+          </span>
+          <span>
+            {aoVivo ? "Acompanhamento ao vivo" : "Reconectando..."}
+            {ultimaAtualizacao &&
+              ` • atualizado às ${ultimaAtualizacao.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}`}
+          </span>
+        </div>
       </div>
+
 
       <section className="mt-5 rounded-2xl border border-border bg-card p-4 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
