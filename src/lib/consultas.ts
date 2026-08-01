@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { otimizarImagem } from "./imagem";
 import type { Produto } from "./pedidos";
 
 type LinhaPreco = { id: string; tamanho: string | null; preco: number | string };
