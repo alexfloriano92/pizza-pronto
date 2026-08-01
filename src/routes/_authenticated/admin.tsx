@@ -2,7 +2,7 @@ import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ImagePlus, Loader2, Pencil, Plus, Store } from "lucide-react";
+import { ImagePlus, Loader2, Pencil, Plus, Store, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buscarProdutos, enviarImagemProduto, precosOrdenados, urlAssinada } from "@/lib/consultas";
 import { useConfigLoja } from "@/lib/loja";
