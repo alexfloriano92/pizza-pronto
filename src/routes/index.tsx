@@ -36,7 +36,24 @@ export const Route = createFileRoute("/")({
         content: "Pizzas fritas artesanais e bebidas geladas com entrega ou retirada.",
       },
     ],
+    links: [{ rel: "canonical", href: SITE_URL + "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          name: "Pizza Frita Delivery",
+          servesCuisine: "Pizza frita",
+          url: SITE_URL,
+          hasMenu: SITE_URL + "/",
+          acceptsReservations: false,
+          priceRange: "$$",
+        }),
+      },
+    ],
   }),
+
   component: Cardapio,
 });
 
