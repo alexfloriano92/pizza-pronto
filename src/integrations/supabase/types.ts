@@ -40,6 +40,7 @@ export type Database = {
       }
       pedidos: {
         Row: {
+          arquivado: boolean
           atualizado_em: string
           cliente_nome: string
           cliente_telefone: string
@@ -54,6 +55,7 @@ export type Database = {
           valor_total: number
         }
         Insert: {
+          arquivado?: boolean
           atualizado_em?: string
           cliente_nome: string
           cliente_telefone: string
@@ -68,6 +70,7 @@ export type Database = {
           valor_total?: number
         }
         Update: {
+          arquivado?: boolean
           atualizado_em?: string
           cliente_nome?: string
           cliente_telefone?: string
@@ -177,6 +180,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      arquivar_pedidos_antigos: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
