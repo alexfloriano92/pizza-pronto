@@ -63,7 +63,9 @@ function Painel() {
   const { data: pedidos, isLoading, refetch } = useQuery({
     queryKey: ["pedidos-painel"],
     queryFn: buscarPedidos,
+    refetchInterval: 60_000,
   });
+
 
   React.useEffect(() => {
     const liberar = () => liberarAudio();
