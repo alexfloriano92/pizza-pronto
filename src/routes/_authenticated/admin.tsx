@@ -109,11 +109,15 @@ function Admin() {
             <h1 className="text-2xl font-extrabold tracking-tight">Cadastro de produtos</h1>
             <p className="text-sm opacity-85">Alterações refletem no cardápio na hora</p>
           </div>
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
             <ChaveLoja />
+            <Link to="/vendas" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
+              Vendas
+            </Link>
             <Link to="/painel" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
               Painel
             </Link>
+
             <Link to="/" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
               Cardápio
             </Link>
