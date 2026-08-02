@@ -193,6 +193,34 @@ function Vendas() {
           ))}
         </div>
 
+        {periodo === "personalizado" ? (
+          <div className="flex flex-wrap items-end gap-3 rounded-2xl bg-secondary/50 p-4">
+            <label className="text-sm font-medium text-secondary-foreground">
+              De
+              <input
+                type="date"
+                value={de}
+                max={ate}
+                onChange={(e) => setDe(e.target.value)}
+                className="mt-1 block rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+              />
+            </label>
+            <label className="text-sm font-medium text-secondary-foreground">
+              Até
+              <input
+                type="date"
+                value={ate}
+                min={de}
+                onChange={(e) => setAte(e.target.value)}
+                className="mt-1 block rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+              />
+            </label>
+            <p className="py-2 text-sm text-muted-foreground">
+              {pedidos.length} pedido(s) no período
+            </p>
+          </div>
+        ) : null}
+
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
