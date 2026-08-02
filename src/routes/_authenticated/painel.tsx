@@ -33,21 +33,16 @@ export const Route = createFileRoute("/_authenticated/painel")({
   component: Painel,
 });
 
-function inicioDoDia() {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
-}
-
 /**
- * Mostra apenas os pedidos do dia atual — mais pedidos antigos que ainda
- * não foram finalizados (para nada ficar esquecido na cozinha).
+ * A cozinha vê apenas pedidos não arquivados. Um job diário no banco
+ * (arquivar_pedidos_antigos) arquiva automaticamente os concluídos antigos,
+ * e o histórico completo continua no dashboard de vendas.
  */
 async function buscarPedidos(): Promise<Pedido[]> {
   const { data, error } = await supabase
     .from("pedidos")
     .select("*")
-    .or(`criado_em.gte.${inicioDoDia()},status.neq.finalizado`)
+    .eq("arquivado", false)
     .order("criado_em", { ascending: false })
     .limit(200);
   if (error) throw error;
@@ -57,6 +52,17 @@ async function buscarPedidos(): Promise<Pedido[]> {
     valor_total: Number(p.valor_total),
   }));
 }
+
+/** Arquiva manualmente os concluídos visíveis (limpeza sob demanda). */
+async function arquivarConcluidos() {
+  const { error } = await supabase
+    .from("pedidos")
+    .update({ arquivado: true })
+    .eq("arquivado", false)
+    .in("status", ["finalizado", "cancelado"]);
+  if (error) throw error;
+}
+
 
 
 function Painel() {
