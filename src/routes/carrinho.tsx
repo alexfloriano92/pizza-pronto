@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
     meta: [
+      { name: "robots", content: "noindex, nofollow" },
       { title: "Carrinho — Pizza Frita Delivery" },
       { name: "description", content: "Revise os itens do seu pedido antes de finalizar." },
       { property: "og:title", content: "Carrinho — Pizza Frita Delivery" },

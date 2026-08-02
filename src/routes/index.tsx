@@ -21,6 +21,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+const SITE_URL = "https://project--66412ab3-ba9f-45d4-8383-635d3ef93683.lovable.app";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -36,7 +38,24 @@ export const Route = createFileRoute("/")({
         content: "Pizzas fritas artesanais e bebidas geladas com entrega ou retirada.",
       },
     ],
+    links: [{ rel: "canonical", href: SITE_URL + "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          name: "Pizza Frita Delivery",
+          servesCuisine: "Pizza frita",
+          url: SITE_URL,
+          hasMenu: SITE_URL + "/",
+          acceptsReservations: false,
+          priceRange: "$$",
+        }),
+      },
+    ],
   }),
+
   component: Cardapio,
 });
 
