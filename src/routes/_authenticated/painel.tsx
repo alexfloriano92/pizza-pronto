@@ -112,7 +112,9 @@ function Painel() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight">Painel da cozinha</h1>
-            <p className="text-sm opacity-85">Atualiza automaticamente com novos pedidos</p>
+            <p className="text-sm opacity-85">
+              Pedidos de hoje (mais os pendentes de dias anteriores) · histórico completo em Vendas
+            </p>
           </div>
           <div className="flex flex-wrap gap-2 text-sm">
             <Link to="/vendas" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
