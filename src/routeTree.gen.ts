@@ -17,6 +17,7 @@ import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
+import { Route as AuthenticatedVendasRouteImport } from './routes/_authenticated/vendas'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as RastreioIdRouteImport } from './routes/rastreio.$id'
 
@@ -59,6 +60,11 @@ const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   path: '/painel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVendasRoute = AuthenticatedVendasRouteImport.update({
+  id: '/vendas',
+  path: '/vendas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const PedidoIdRoute = PedidoIdRouteImport.update({
   id: '/pedido/$id',
   path: '/pedido/$id',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/painel': typeof AuthenticatedPainelRoute
+  '/vendas': typeof AuthenticatedVendasRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/rastreio/$id': typeof RastreioIdRoute
 }
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/painel': typeof AuthenticatedPainelRoute
+  '/vendas': typeof AuthenticatedVendasRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/rastreio/$id': typeof RastreioIdRoute
 }
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
+  '/_authenticated/vendas': typeof AuthenticatedVendasRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/rastreio/$id': typeof RastreioIdRoute
 }
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/admin'
     | '/painel'
+    | '/vendas'
     | '/pedido/$id'
     | '/rastreio/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/admin'
     | '/painel'
+    | '/vendas'
     | '/pedido/$id'
     | '/rastreio/$id'
   id:
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/_authenticated/admin'
     | '/_authenticated/painel'
+    | '/_authenticated/vendas'
     | '/pedido/$id'
     | '/rastreio/$id'
   fileRoutesById: FileRoutesById
@@ -211,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/vendas': {
+      id: '/_authenticated/vendas'
+      path: '/vendas'
+      fullPath: '/vendas'
+      preLoaderRoute: typeof AuthenticatedVendasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/pedido/$id': {
       id: '/pedido/$id'
       path: '/pedido/$id'
@@ -231,11 +250,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
+  AuthenticatedVendasRoute: typeof AuthenticatedVendasRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
+  AuthenticatedVendasRoute: AuthenticatedVendasRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
