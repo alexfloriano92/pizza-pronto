@@ -100,10 +100,14 @@ function Painel() {
             <h1 className="text-2xl font-extrabold tracking-tight">Painel da cozinha</h1>
             <p className="text-sm opacity-85">Atualiza automaticamente com novos pedidos</p>
           </div>
-          <div className="flex gap-2 text-sm">
+          <div className="flex flex-wrap gap-2 text-sm">
+            <Link to="/vendas" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
+              Vendas
+            </Link>
             <Link to="/admin" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
               Cadastro
             </Link>
+
             <Link to="/" className="rounded-lg bg-primary-foreground/15 px-3 py-2">
               Cardápio
             </Link>
