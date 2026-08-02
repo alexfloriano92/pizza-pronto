@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
+      { name: "robots", content: "noindex, nofollow" },
       { title: "Checkout — Pizza Frita Delivery" },
       { name: "description", content: "Informe seus dados e confirme o pedido de pizza frita." },
       { property: "og:title", content: "Checkout — Pizza Frita Delivery" },
