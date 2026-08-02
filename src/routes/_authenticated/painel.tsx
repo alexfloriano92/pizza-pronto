@@ -33,10 +33,21 @@ export const Route = createFileRoute("/_authenticated/painel")({
   component: Painel,
 });
 
+function inicioDoDia() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+}
+
+/**
+ * Mostra apenas os pedidos do dia atual — mais pedidos antigos que ainda
+ * não foram finalizados (para nada ficar esquecido na cozinha).
+ */
 async function buscarPedidos(): Promise<Pedido[]> {
   const { data, error } = await supabase
     .from("pedidos")
     .select("*")
+    .or(`criado_em.gte.${inicioDoDia()},status.neq.finalizado`)
     .order("criado_em", { ascending: false })
     .limit(200);
   if (error) throw error;
@@ -46,6 +57,7 @@ async function buscarPedidos(): Promise<Pedido[]> {
     valor_total: Number(p.valor_total),
   }));
 }
+
 
 function Painel() {
   const { data: pedidos, isLoading, refetch } = useQuery({
