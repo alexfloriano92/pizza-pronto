@@ -32,13 +32,15 @@ export const Route = createFileRoute("/_authenticated/vendas")({
   component: Vendas,
 });
 
-type Periodo = "7" | "30" | "90" | "tudo";
+type Periodo = "hoje" | "7" | "30" | "90" | "tudo" | "personalizado";
 
 const PERIODOS: { valor: Periodo; label: string }[] = [
+  { valor: "hoje", label: "Hoje" },
   { valor: "7", label: "7 dias" },
   { valor: "30", label: "30 dias" },
   { valor: "90", label: "90 dias" },
   { valor: "tudo", label: "Tudo" },
+  { valor: "personalizado", label: "Por data" },
 ];
 
 async function buscarVendas(): Promise<Pedido[]> {
