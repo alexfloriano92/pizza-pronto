@@ -32,13 +32,15 @@ export const Route = createFileRoute("/_authenticated/vendas")({
   component: Vendas,
 });
 
-type Periodo = "7" | "30" | "90" | "tudo";
+type Periodo = "hoje" | "7" | "30" | "90" | "tudo" | "personalizado";
 
 const PERIODOS: { valor: Periodo; label: string }[] = [
+  { valor: "hoje", label: "Hoje" },
   { valor: "7", label: "7 dias" },
   { valor: "30", label: "30 dias" },
   { valor: "90", label: "90 dias" },
   { valor: "tudo", label: "Tudo" },
+  { valor: "personalizado", label: "Por data" },
 ];
 
 async function buscarVendas(): Promise<Pedido[]> {
@@ -59,16 +61,36 @@ function diaLabel(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 }
 
+function isoHoje() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function Vendas() {
   const [periodo, setPeriodo] = React.useState<Periodo>("30");
+  const [de, setDe] = React.useState(isoHoje());
+  const [ate, setAte] = React.useState(isoHoje());
   const { data, isLoading } = useQuery({ queryKey: ["vendas"], queryFn: buscarVendas });
 
   const pedidos = React.useMemo(() => {
     const todos = data ?? [];
     if (periodo === "tudo") return todos;
+    if (periodo === "personalizado") {
+      const inicio = new Date(`${de}T00:00:00`).getTime();
+      const fim = new Date(`${ate}T23:59:59.999`).getTime();
+      return todos.filter((p) => {
+        const t = new Date(p.criado_em).getTime();
+        return t >= inicio && t <= fim;
+      });
+    }
+    if (periodo === "hoje") {
+      const inicio = new Date(`${isoHoje()}T00:00:00`).getTime();
+      return todos.filter((p) => new Date(p.criado_em).getTime() >= inicio);
+    }
     const limite = Date.now() - Number(periodo) * 24 * 60 * 60 * 1000;
     return todos.filter((p) => new Date(p.criado_em).getTime() >= limite);
-  }, [data, periodo]);
+  }, [data, periodo, de, ate]);
+
 
   const resumo = React.useMemo(() => {
     const concluidos = pedidos.filter((p) => p.status !== "recebido" || true);
@@ -170,6 +192,34 @@ function Vendas() {
             </button>
           ))}
         </div>
+
+        {periodo === "personalizado" ? (
+          <div className="flex flex-wrap items-end gap-3 rounded-2xl bg-secondary/50 p-4">
+            <label className="text-sm font-medium text-secondary-foreground">
+              De
+              <input
+                type="date"
+                value={de}
+                max={ate}
+                onChange={(e) => setDe(e.target.value)}
+                className="mt-1 block rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+              />
+            </label>
+            <label className="text-sm font-medium text-secondary-foreground">
+              Até
+              <input
+                type="date"
+                value={ate}
+                min={de}
+                onChange={(e) => setAte(e.target.value)}
+                className="mt-1 block rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+              />
+            </label>
+            <p className="py-2 text-sm text-muted-foreground">
+              {pedidos.length} pedido(s) no período
+            </p>
+          </div>
+        ) : null}
 
         {isLoading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
