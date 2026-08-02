@@ -61,16 +61,36 @@ function diaLabel(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 }
 
+function isoHoje() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function Vendas() {
   const [periodo, setPeriodo] = React.useState<Periodo>("30");
+  const [de, setDe] = React.useState(isoHoje());
+  const [ate, setAte] = React.useState(isoHoje());
   const { data, isLoading } = useQuery({ queryKey: ["vendas"], queryFn: buscarVendas });
 
   const pedidos = React.useMemo(() => {
     const todos = data ?? [];
     if (periodo === "tudo") return todos;
+    if (periodo === "personalizado") {
+      const inicio = new Date(`${de}T00:00:00`).getTime();
+      const fim = new Date(`${ate}T23:59:59.999`).getTime();
+      return todos.filter((p) => {
+        const t = new Date(p.criado_em).getTime();
+        return t >= inicio && t <= fim;
+      });
+    }
+    if (periodo === "hoje") {
+      const inicio = new Date(`${isoHoje()}T00:00:00`).getTime();
+      return todos.filter((p) => new Date(p.criado_em).getTime() >= inicio);
+    }
     const limite = Date.now() - Number(periodo) * 24 * 60 * 60 * 1000;
     return todos.filter((p) => new Date(p.criado_em).getTime() >= limite);
-  }, [data, periodo]);
+  }, [data, periodo, de, ate]);
+
 
   const resumo = React.useMemo(() => {
     const concluidos = pedidos.filter((p) => p.status !== "recebido" || true);
