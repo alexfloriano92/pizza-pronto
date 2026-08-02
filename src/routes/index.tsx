@@ -21,6 +21,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+const SITE_URL = "https://project--66412ab3-ba9f-45d4-8383-635d3ef93683.lovable.app";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
