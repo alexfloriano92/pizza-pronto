@@ -15,7 +15,7 @@ export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
             <Pizza className="size-6 shrink-0" />
             <div className="leading-tight">
               <p className="text-base font-extrabold tracking-tight">Pizza Frita</p>
-              <p className="text-[11px] opacity-80">Quentinha na sua porta</p>
+              <p className="text-[11px] opacity-80">Quentinha e saborosa</p>
             </div>
           </Link>
 
