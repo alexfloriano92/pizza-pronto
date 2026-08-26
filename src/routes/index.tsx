@@ -219,37 +219,41 @@ function PromocaoDoDia({
       <TituloSecao titulo="Promoção do dia" etiqueta="Só hoje" />
       <button
         onClick={() => onSelecionar(produto)}
-        className="flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-primary bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+        className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border-2 border-dashed border-primary bg-card p-2.5 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 sm:gap-4 sm:p-4"
       >
         <div className="relative shrink-0">
           <img
             src={produto.imagem_url || IMAGEM_FALLBACK}
             alt={produto.nome}
-            className="size-20 rounded-xl object-cover"
+            className="size-16 rounded-xl object-cover sm:size-24"
           />
           {desconto > 0 && (
-            <span className="absolute -right-2 -top-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground shadow">
+            <span className="absolute -right-1.5 -top-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold text-primary-foreground shadow sm:text-[11px]">
               -{desconto}%
             </span>
           )}
         </div>
 
-        <div className="min-w-0 flex-1">
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-accent">
-            <Flame className="size-3" /> Só hoje · Grande
+        <div className="min-w-0">
+          <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-accent sm:text-[11px]">
+            <Flame className="size-3 shrink-0" /> Só hoje · Grande
           </span>
-          <h3 className="truncate text-sm font-bold leading-tight">{produto.nome}</h3>
-          <span className="flex items-baseline gap-2">
+          <h3 className="truncate text-sm font-bold leading-tight sm:text-base">{produto.nome}</h3>
+          <span className="flex flex-wrap items-baseline gap-x-2">
             {promo != null && cheio > promo && (
-              <span className="text-xs text-muted-foreground line-through">{moeda(cheio)}</span>
+              <span className="text-[11px] text-muted-foreground line-through sm:text-sm">
+                {moeda(cheio)}
+              </span>
             )}
-            <span className="font-display text-base text-primary">
+            <span className="font-display text-base text-primary sm:text-xl">
               {moeda(precoVigente(produto))}
             </span>
           </span>
         </div>
 
-        <BotaoAdicionar tamanho="sm" />
+        <span className="shrink-0">
+          <BotaoAdicionar tamanho="sm" />
+        </span>
       </button>
     </section>
   );
