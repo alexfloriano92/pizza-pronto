@@ -252,7 +252,14 @@ function Lista({
               className="size-20 shrink-0 rounded-xl object-cover"
             />
             <div className="min-w-0 flex-1">
-              <p className="font-semibold leading-tight">{produto.nome}</p>
+              <p className="flex items-center gap-2 font-semibold leading-tight">
+                {produto.nome}
+                {produto.promocao && (
+                  <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+                    Promoção do dia
+                  </span>
+                )}
+              </p>
               <p className="line-clamp-2 text-xs text-muted-foreground">{produto.descricao}</p>
               <p className="mt-1 text-xs">
                 {precosOrdenados(produto)
