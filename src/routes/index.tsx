@@ -342,12 +342,13 @@ function SecaoBebidas({
   return (
     <section className="mb-8">
       <TituloSecao titulo="Bebidas" etiqueta="Geladas" />
-      <div className="space-y-3">
+      {/* Linhas viram 2 colunas em telas médias, sem perder a leitura em 320px */}
+      <div className="grid gap-3 md:grid-cols-2">
         {itens.map((produto) => (
           <button
             key={produto.id}
             onClick={() => onSelecionar(produto)}
-            className="flex w-full items-center justify-between gap-3 rounded-2xl border border-foreground/10 bg-card px-3 py-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+            className="grid w-full min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-foreground/10 bg-card px-3 py-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
           >
             <div className="flex min-w-0 items-center gap-3">
               <img
