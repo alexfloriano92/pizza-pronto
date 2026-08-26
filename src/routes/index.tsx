@@ -161,7 +161,7 @@ function Cardapio() {
           to="/painel"
           aria-label="Área da equipe"
           title="Área da equipe"
-          className="inline-flex size-8 items-center justify-center opacity-60 transition-opacity hover:opacity-100"
+          className="inline-flex size-11 items-center justify-center opacity-60 transition-opacity hover:opacity-100"
         >
           <Lock className="size-3.5" />
         </Link>
