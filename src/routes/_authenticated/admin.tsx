@@ -42,6 +42,8 @@ type Rascunho = {
   imagem_url: string;
   previa: string;
   disponivel: boolean;
+  promocao: boolean;
+  preco_promocional: string;
   precos: { pequena: string; media: string; grande: string; unico: string };
 };
 
@@ -57,6 +59,8 @@ function rascunhoVazio(tipo: "pizza" | "bebida"): Rascunho {
     imagem_url: "",
     previa: "",
     disponivel: true,
+    promocao: false,
+    preco_promocional: "",
     precos: { pequena: "", media: "", grande: "", unico: "" },
   };
 }
@@ -72,6 +76,8 @@ function paraRascunho(p: Produto): Rascunho {
     imagem_url: p.imagem_ref ?? "",
     previa: p.imagem_url ?? "",
     disponivel: p.disponivel,
+    promocao: p.promocao,
+    preco_promocional: p.preco_promocional != null ? String(p.preco_promocional) : "",
     precos: {
       pequena: buscar("pequena"),
       media: buscar("media"),
@@ -364,6 +370,11 @@ function FormularioProduto({
       descricao: form.descricao.trim(),
       imagem_url: form.imagem_url.trim() || IMAGEM_FALLBACK,
       disponivel: form.disponivel,
+      promocao: form.tipo === "pizza" ? form.promocao : false,
+      preco_promocional:
+        form.tipo === "pizza" && form.promocao && form.preco_promocional.trim()
+          ? Number(form.preco_promocional.replace(",", ".")) || null
+          : null,
     };
 
     let produtoId = form.id;
@@ -553,6 +564,30 @@ function FormularioProduto({
                   setForm({ ...form, precos: { ...form.precos, unico: e.target.value } })
                 }
               />
+            </div>
+          )}
+
+          {form.tipo === "pizza" && (
+            <div className="rounded-xl border border-border bg-secondary/40 p-3">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Switch
+                  checked={form.promocao}
+                  onCheckedChange={(v) => setForm({ ...form, promocao: v })}
+                />
+                Promoção do dia (destaque no cardápio)
+              </label>
+              {form.promocao && (
+                <div className="mt-3">
+                  <Label htmlFor="preco-promo">Preço promocional (opcional)</Label>
+                  <Input
+                    id="preco-promo"
+                    inputMode="decimal"
+                    placeholder="Ex.: 29,90"
+                    value={form.preco_promocional}
+                    onChange={(e) => setForm({ ...form, preco_promocional: e.target.value })}
+                  />
+                </div>
+              )}
             </div>
           )}
 
