@@ -276,30 +276,34 @@ function SecaoPizzas({
     <section className="mb-8">
       <TituloSecao titulo="Pizzas" etiqueta="Tradicionais" />
 
+      {/* Destaque: grid de 2 colunas (mídia + conteúdo) resiste a nomes longos via min-w-0 */}
       {destaque && (
         <button
           onClick={() => onSelecionar(destaque)}
-          className="mb-4 flex w-full gap-4 rounded-2xl border border-foreground/10 bg-card p-4 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+          className="mb-4 grid w-full grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-2xl border border-foreground/10 bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 sm:gap-4 sm:p-4"
         >
           <img
             src={destaque.imagem_url || IMAGEM_FALLBACK}
             alt={destaque.nome}
-            className="size-28 shrink-0 rounded-xl object-cover"
+            className="aspect-square w-20 shrink-0 rounded-xl object-cover sm:w-28"
           />
-          <div className="flex min-w-0 flex-1 flex-col justify-between">
-            <div>
-              <h3 className="font-bold leading-tight">{destaque.nome}</h3>
+          <div className="flex min-w-0 flex-col justify-between">
+            <div className="min-w-0">
+              <h3 className="truncate font-bold leading-tight">{destaque.nome}</h3>
               <p className="line-clamp-2 text-sm text-muted-foreground">{destaque.descricao}</p>
             </div>
-            <div className="mt-2 flex items-center justify-between">
-              <span className="font-bold text-primary">{moeda(precoVigente(destaque))}</span>
+            <div className="mt-2 flex items-center justify-between gap-2">
+              <span className="truncate font-bold text-primary">
+                {moeda(precoVigente(destaque))}
+              </span>
               <BotaoAdicionar />
             </div>
           </div>
         </button>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {/* Grade fluida: quebra pelo conteúdo (mín. 9.5rem), não por device */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))] gap-3 sm:gap-4">
         {resto.map((produto) => (
           <button
             key={produto.id}
