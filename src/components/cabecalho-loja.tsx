@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ShoppingCart, Search } from "lucide-react";
 import { useCarrinho } from "@/lib/carrinho";
+import logoFritzza from "@/assets/logo-fritzza.png";
 
 export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
   const { totalItens } = useCarrinho();
