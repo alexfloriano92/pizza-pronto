@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { buscarProdutos, precosOrdenados } from "@/lib/consultas";
 import { IMAGEM_FALLBACK, TAMANHO_LABEL, moeda, type Produto, type Tamanho } from "@/lib/pedidos";
 import { useCarrinho } from "@/lib/carrinho";
+import { focarConteudoDoModal, useRetornoDeFoco } from "@/lib/foco";
 import { MENSAGEM_FECHADA_PADRAO, useConfigLoja } from "@/lib/loja";
 import { CabecalhoLoja } from "@/components/cabecalho-loja";
 import { Button } from "@/components/ui/button";
@@ -435,10 +436,7 @@ function DialogProduto({
     <Dialog open={!!produto} onOpenChange={(aberto) => !aberto && onClose()}>
       {/* Mobile: quase tela cheia com scroll interno (overscroll-contain evita rolar o fundo) */}
       <DialogContent
-        onOpenAutoFocus={(e) => {
-          e.preventDefault();
-          (e.currentTarget as HTMLElement).focus();
-        }}
+        onOpenAutoFocus={focarConteudoDoModal}
         tabIndex={-1}
         className="max-h-[90svh] w-[calc(100vw-1.5rem)] max-w-md overflow-y-auto overscroll-contain rounded-2xl">
         <DialogHeader>
