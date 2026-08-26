@@ -90,22 +90,24 @@ function Cardapio() {
   return (
     <CabecalhoLoja>
       {fechada && (
-        <div className="mb-4 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
-          <StoreIcon className="mt-0.5 size-5 shrink-0 text-destructive" />
-          <div>
-            <p className="font-bold text-destructive">Estamos fechados</p>
-            <p className="text-sm text-muted-foreground">
-              {config?.mensagem?.trim() || MENSAGEM_FECHADA_PADRAO}
-            </p>
-          </div>
+        <div className="-mx-5 mb-8 overflow-hidden bg-primary px-5 py-2 text-primary-foreground">
+          <p className="font-display text-[11px] tracking-[0.25em]">
+            <StoreIcon className="mr-2 inline size-3.5 align-[-2px]" />
+            Estamos fechados — {config?.mensagem?.trim() || MENSAGEM_FECHADA_PADRAO}
+          </p>
         </div>
       )}
 
-      <section className="mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-accent px-5 py-6 text-primary-foreground">
-        <h1 className="text-2xl font-extrabold leading-tight">
-          Pizza frita feita na hora
+      <section className="mb-12 border-b-2 border-foreground pb-8">
+        <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-accent">
+          A casa da massa crocante
+        </p>
+        <h1 className="mt-3 font-display text-4xl leading-[0.9] sm:text-6xl">
+          Pizza frita
+          <br />
+          <span className="text-primary">feita na hora</span>
         </h1>
-        <p className="mt-1 max-w-md text-sm opacity-90">
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
           Massa crocante por fora, recheio derretido por dentro. Peça e acompanhe seu pedido em
           tempo real.
         </p>
@@ -114,26 +116,28 @@ function Cardapio() {
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl" />
+            <Skeleton key={i} className="h-56" />
           ))}
         </div>
       ) : (
         <>
-          <SecaoProdutos titulo="Pizzas fritas" itens={pizzas} onSelecionar={setSelecionado} />
-          <SecaoProdutos titulo="Bebidas" itens={bebidas} onSelecionar={setSelecionado} />
+          <SecaoPizzas titulo="Pizzas" numero="01" itens={pizzas} onSelecionar={setSelecionado} />
+          <SecaoBebidas titulo="Bebidas" numero="02" itens={bebidas} onSelecionar={setSelecionado} />
         </>
       )}
 
-      <p className="mt-12 text-center">
+      <footer className="-mx-5 mt-16 flex flex-col items-center gap-2 bg-foreground px-5 py-12 text-background">
+        <p className="font-display text-lg tracking-[0.1em]">Pizza Frita</p>
         <Link
           to="/painel"
           aria-label="Área da equipe"
           title="Área da equipe"
-          className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground/40 transition-colors hover:text-muted-foreground"
+          className="mt-2 inline-flex size-8 items-center justify-center opacity-30 transition-opacity hover:opacity-70"
         >
           <Lock className="size-3.5" />
         </Link>
-      </p>
+        <p className="text-[9px] font-bold uppercase tracking-[0.4em] opacity-30">Conexão segura</p>
+      </footer>
 
       <DialogProduto
         produto={selecionado}
@@ -144,51 +148,137 @@ function Cardapio() {
   );
 }
 
-function SecaoProdutos({
+function CabecalhoSecao({ titulo, numero }: { titulo: string; numero: string }) {
+  return (
+    <div className="mb-8 flex items-baseline gap-3">
+      <h2 className="font-display text-3xl sm:text-4xl">{titulo}</h2>
+      <span className="h-[2px] flex-1 bg-foreground/15" />
+      <span className="font-display text-sm text-accent">{numero}</span>
+    </div>
+  );
+}
+
+function precoBase(produto: Produto) {
+  const precos = precosOrdenados(produto);
+  return precos.length ? Math.min(...precos.map((p) => p.preco)) : 0;
+}
+
+function SecaoPizzas({
   titulo,
+  numero,
   itens,
   onSelecionar,
 }: {
   titulo: string;
+  numero: string;
+  itens: Produto[];
+  onSelecionar: (p: Produto) => void;
+}) {
+  if (itens.length === 0) return null;
+  const [heroi, ...resto] = itens;
+
+  return (
+    <section className="mb-16">
+      <CabecalhoSecao titulo={titulo} numero={numero} />
+
+      {heroi && (
+        <button
+          onClick={() => onSelecionar(heroi)}
+          className="group relative mb-24 block w-full text-left"
+        >
+          <div className="aspect-[4/3] overflow-hidden sm:aspect-[16/9]">
+            <img
+              src={heroi.imagem_url || IMAGEM_FALLBACK}
+              alt={heroi.nome}
+              className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            />
+          </div>
+          <div className="absolute -bottom-10 left-0 right-8 border border-foreground bg-background p-5 shadow-brutal sm:right-auto sm:w-[70%] sm:max-w-md">
+            <h3 className="font-display text-xl leading-none sm:text-2xl">{heroi.nome}</h3>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{heroi.descricao}</p>
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                a partir de
+              </span>
+              <span className="font-display text-lg text-primary">{moeda(precoBase(heroi))}</span>
+            </div>
+          </div>
+        </button>
+      )}
+
+      <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
+        {resto.map((produto, i) => (
+          <button
+            key={produto.id}
+            onClick={() => onSelecionar(produto)}
+            className={`group block text-left ${i % 2 === 1 ? "pt-6" : ""}`}
+          >
+            <div className="aspect-square overflow-hidden">
+              <img
+                src={produto.imagem_url || IMAGEM_FALLBACK}
+                alt={produto.nome}
+                loading="lazy"
+                className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+              />
+            </div>
+            <h3 className="mt-3 font-display text-xs leading-tight">{produto.nome}</h3>
+            <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">
+              {produto.descricao}
+            </p>
+            <span className="mt-2 block text-xs font-bold text-accent">
+              {moeda(precoBase(produto))}
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SecaoBebidas({
+  titulo,
+  numero,
+  itens,
+  onSelecionar,
+}: {
+  titulo: string;
+  numero: string;
   itens: Produto[];
   onSelecionar: (p: Produto) => void;
 }) {
   if (itens.length === 0) return null;
   return (
     <section className="mb-8">
-      <h2 className="mb-3 text-lg font-bold tracking-tight">{titulo}</h2>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {itens.map((produto) => {
-          const precos = precosOrdenados(produto);
-          const menor = precos.length ? Math.min(...precos.map((p) => p.preco)) : 0;
-          return (
-            <button
-              key={produto.id}
-              onClick={() => onSelecionar(produto)}
-              className="flex gap-3 rounded-2xl border border-border bg-card p-3 text-left shadow-sm transition-shadow hover:shadow-md"
-            >
+      <CabecalhoSecao titulo={titulo} numero={numero} />
+      <div>
+        {itens.map((produto) => (
+          <button
+            key={produto.id}
+            onClick={() => onSelecionar(produto)}
+            className="flex w-full items-center justify-between gap-4 border-b border-foreground/10 py-4 text-left transition-colors hover:bg-secondary/60"
+          >
+            <div className="flex min-w-0 items-center gap-3">
               <img
                 src={produto.imagem_url || IMAGEM_FALLBACK}
                 alt={produto.nome}
                 loading="lazy"
-                className="size-20 shrink-0 rounded-xl object-cover"
+                className="size-12 shrink-0 object-cover"
               />
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold leading-tight">{produto.nome}</p>
-                <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
-                  {produto.descricao}
-                </p>
-                <p className="mt-2 text-sm font-bold text-primary">
-                  {produto.tipo === "pizza" ? `a partir de ${moeda(menor)}` : moeda(menor)}
-                </p>
+              <div className="min-w-0">
+                <h3 className="font-display text-xs leading-tight">{produto.nome}</h3>
+                <p className="truncate text-[11px] text-muted-foreground">{produto.descricao}</p>
               </div>
-            </button>
-          );
-        })}
+            </div>
+            <span className="shrink-0 text-sm font-bold tracking-tight">
+              {moeda(precoBase(produto))}
+            </span>
+          </button>
+        ))}
       </div>
     </section>
   );
 }
+
 
 function DialogProduto({
   produto,
