@@ -5,6 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-display: "Archivo Black", "Arial Black", sans-serif;
+  --font-sans: "Hind", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -12,6 +14,7 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -52,44 +55,45 @@
 }
 
 :root {
-  --radius: 0.875rem;
-  --background: oklch(0.982 0.014 84);
-  --foreground: oklch(0.245 0.038 39);
-  --card: oklch(0.995 0.008 84);
-  --card-foreground: oklch(0.245 0.038 39);
-  --popover: oklch(0.995 0.008 84);
-  --popover-foreground: oklch(0.245 0.038 39);
-  --primary: oklch(0.52 0.185 30);
-  --primary-foreground: oklch(0.985 0.014 84);
-  --secondary: oklch(0.945 0.038 78);
-  --secondary-foreground: oklch(0.33 0.075 43);
-  --muted: oklch(0.948 0.024 80);
-  --muted-foreground: oklch(0.5 0.035 50);
-  --accent: oklch(0.72 0.17 58);
-  --accent-foreground: oklch(0.22 0.04 40);
-  --destructive: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.985 0.01 84);
-  --success: oklch(0.58 0.13 145);
-  --success-foreground: oklch(0.985 0.01 84);
-  --warning: oklch(0.78 0.16 78);
-  --warning-foreground: oklch(0.25 0.05 45);
-  --border: oklch(0.9 0.028 72);
-  --input: oklch(0.9 0.028 72);
-  --ring: oklch(0.52 0.185 30);
-  --chart-1: oklch(0.52 0.185 30);
-  --chart-2: oklch(0.72 0.17 58);
-  --chart-3: oklch(0.78 0.16 78);
-  --chart-4: oklch(0.58 0.13 145);
-  --chart-5: oklch(0.45 0.09 45);
-  --sidebar: oklch(0.96 0.024 80);
-  --sidebar-foreground: oklch(0.245 0.038 39);
-  --sidebar-primary: oklch(0.52 0.185 30);
-  --sidebar-primary-foreground: oklch(0.985 0.014 84);
-  --sidebar-accent: oklch(0.93 0.04 78);
-  --sidebar-accent-foreground: oklch(0.245 0.038 39);
-  --sidebar-border: oklch(0.9 0.028 72);
-  --sidebar-ring: oklch(0.52 0.185 30);
+  --radius: 0.125rem;
+  --background: oklch(0.977 0.019 85);
+  --foreground: oklch(0.276 0.032 52);
+  --card: oklch(0.977 0.019 85);
+  --card-foreground: oklch(0.276 0.032 52);
+  --popover: oklch(0.977 0.019 85);
+  --popover-foreground: oklch(0.276 0.032 52);
+  --primary: oklch(0.523 0.184 33);
+  --primary-foreground: oklch(0.977 0.019 85);
+  --secondary: oklch(0.938 0.034 82);
+  --secondary-foreground: oklch(0.276 0.032 52);
+  --muted: oklch(0.938 0.03 82);
+  --muted-foreground: oklch(0.49 0.035 55);
+  --accent: oklch(0.716 0.148 62);
+  --accent-foreground: oklch(0.24 0.03 52);
+  --destructive: oklch(0.523 0.184 33);
+  --destructive-foreground: oklch(0.977 0.019 85);
+  --success: oklch(0.55 0.12 145);
+  --success-foreground: oklch(0.977 0.019 85);
+  --warning: oklch(0.716 0.148 62);
+  --warning-foreground: oklch(0.24 0.03 52);
+  --border: oklch(0.276 0.032 52 / 18%);
+  --input: oklch(0.276 0.032 52 / 28%);
+  --ring: oklch(0.523 0.184 33);
+  --chart-1: oklch(0.523 0.184 33);
+  --chart-2: oklch(0.716 0.148 62);
+  --chart-3: oklch(0.276 0.032 52);
+  --chart-4: oklch(0.55 0.12 145);
+  --chart-5: oklch(0.62 0.09 55);
+  --sidebar: oklch(0.938 0.03 82);
+  --sidebar-foreground: oklch(0.276 0.032 52);
+  --sidebar-primary: oklch(0.523 0.184 33);
+  --sidebar-primary-foreground: oklch(0.977 0.019 85);
+  --sidebar-accent: oklch(0.916 0.04 78);
+  --sidebar-accent-foreground: oklch(0.276 0.032 52);
+  --sidebar-border: oklch(0.276 0.032 52 / 18%);
+  --sidebar-ring: oklch(0.523 0.184 33);
 }
+
 
 .dark {
   --background: oklch(0.19 0.026 44);
@@ -130,6 +134,21 @@
   --sidebar-ring: oklch(0.62 0.185 32);
 }
 
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+@utility shadow-brutal {
+  box-shadow: 6px 6px 0 0 var(--color-primary);
+}
+
+@utility shadow-brutal-sm {
+  box-shadow: 4px 4px 0 0 var(--color-foreground);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -138,5 +157,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
   }
+
 }
