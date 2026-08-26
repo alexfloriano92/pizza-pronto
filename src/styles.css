@@ -156,15 +156,40 @@
   box-shadow: 0 10px 24px -20px color-mix(in oklab, var(--color-foreground) 70%, transparent);
 }
 
+/* Tipografia fluida: escala suave entre 320px e 1280px sem "degraus" de breakpoint */
+@utility text-fluid-hero {
+  font-size: clamp(1.75rem, 1.1rem + 3.2vw, 3rem);
+  line-height: 1.05;
+}
+
+@utility text-fluid-title {
+  font-size: clamp(1.125rem, 0.95rem + 0.9vw, 1.5rem);
+  line-height: 1.15;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
+  }
+
+  /* Overflow control: nenhum elemento pode gerar rolagem horizontal */
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
   }
 
+  /* Hover só em dispositivos com ponteiro fino (evita "hover preso" no toque) */
+  @media (hover: none) {
+    .hover\:-translate-y-0\.5:hover {
+      transform: none;
+    }
+  }
 }
