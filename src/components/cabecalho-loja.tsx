@@ -60,7 +60,7 @@ export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 pb-24 pt-4">{children}</main>
+      <main id="conteudo" tabIndex={-1} className="mx-auto max-w-5xl px-4 pb-24 pt-4 focus:outline-none">{children}</main>
     </div>
   );
 }
