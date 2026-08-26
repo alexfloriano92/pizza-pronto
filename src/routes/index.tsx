@@ -387,7 +387,14 @@ function DialogProduto({
   React.useEffect(() => {
     if (produto) {
       const precos = precosOrdenados(produto);
-      setTamanho(produto.tipo === "pizza" ? ((precos[0]?.tamanho ?? null) as Tamanho | null) : null);
+      const promocional = produto.promocao && produto.preco_promocional != null;
+      setTamanho(
+        produto.tipo === "pizza"
+          ? promocional
+            ? "grande"
+            : ((precos[0]?.tamanho ?? null) as Tamanho | null)
+          : null,
+      );
       setObs("");
     }
   }, [produto]);
