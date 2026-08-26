@@ -219,49 +219,37 @@ function PromocaoDoDia({
       <TituloSecao titulo="Promoção do dia" etiqueta="Só hoje" />
       <button
         onClick={() => onSelecionar(produto)}
-        className="relative w-full overflow-hidden rounded-3xl bg-primary text-left text-primary-foreground shadow-brutal transition-transform hover:-translate-y-0.5"
+        className="flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-primary bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
       >
-        <div className="relative h-48 w-full overflow-hidden sm:h-60">
+        <div className="relative shrink-0">
           <img
             src={produto.imagem_url || IMAGEM_FALLBACK}
             alt={produto.nome}
-            className="size-full object-cover"
+            className="size-20 rounded-xl object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent" />
-
-          <span className="absolute left-4 top-4 inline-flex animate-pulse items-center gap-1 rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent-foreground shadow-lg">
-            <Flame className="size-3" /> Promoção do dia
-          </span>
-
           {desconto > 0 && (
-            <span className="absolute right-4 top-4 flex size-16 rotate-6 flex-col items-center justify-center rounded-full bg-background font-display text-lg leading-none text-primary shadow-lg">
+            <span className="absolute -right-2 -top-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground shadow">
               -{desconto}%
-              <span className="mt-0.5 text-[8px] font-bold uppercase tracking-wider">off</span>
             </span>
           )}
-
-          <div className="absolute bottom-3 left-4 right-4">
-            <h3 className="font-display text-2xl leading-tight sm:text-3xl">{produto.nome}</h3>
-            <p className="line-clamp-1 text-xs opacity-90">{produto.descricao}</p>
-          </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <div>
-            <span className="inline-flex items-center rounded-full bg-primary-foreground/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-              Tamanho único · Grande
+        <div className="min-w-0 flex-1">
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-accent">
+            <Flame className="size-3" /> Só hoje · Grande
+          </span>
+          <h3 className="truncate text-sm font-bold leading-tight">{produto.nome}</h3>
+          <span className="flex items-baseline gap-2">
+            {promo != null && cheio > promo && (
+              <span className="text-xs text-muted-foreground line-through">{moeda(cheio)}</span>
+            )}
+            <span className="font-display text-base text-primary">
+              {moeda(precoVigente(produto))}
             </span>
-            <span className="mt-1 flex items-baseline gap-2">
-              {promo != null && cheio > promo && (
-                <span className="text-xs line-through opacity-70">{moeda(cheio)}</span>
-              )}
-              <span className="font-display text-2xl">{moeda(precoVigente(produto))}</span>
-            </span>
-          </div>
-          <span className="inline-flex items-center gap-2 rounded-xl bg-background px-4 py-2 font-bold text-primary">
-            <Plus className="size-5" strokeWidth={3} /> Pedir
           </span>
         </div>
+
+        <BotaoAdicionar tamanho="sm" />
       </button>
     </section>
   );
