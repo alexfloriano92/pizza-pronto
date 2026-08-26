@@ -64,6 +64,12 @@ function precoBase(produto: Produto) {
   return precos.length ? Math.min(...precos.map((p) => p.preco)) : 0;
 }
 
+/** Preço cheio do tamanho grande (usado como referência na promoção). */
+function precoGrande(produto: Produto) {
+  const precos = precosOrdenados(produto);
+  return precos.find((p) => p.tamanho === "grande")?.preco ?? precoBase(produto);
+}
+
 function precoVigente(produto: Produto) {
   return produto.promocao && produto.preco_promocional != null
     ? produto.preco_promocional
