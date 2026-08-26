@@ -424,11 +424,11 @@ function DialogProduto({
 
         {emPromocao && (
           <p className="rounded-xl bg-accent/15 px-3 py-2 text-xs font-bold text-accent">
-            Promoção do dia — preço único {moeda(precoAtual)}
+            Promoção do dia — tamanho único Grande por {moeda(precoAtual)}
           </p>
         )}
 
-        {produto.tipo === "pizza" && (
+        {produto.tipo === "pizza" && !emPromocao && (
           <div>
             <Label className="mb-2 block">Tamanho</Label>
             <div className="grid grid-cols-3 gap-2">
