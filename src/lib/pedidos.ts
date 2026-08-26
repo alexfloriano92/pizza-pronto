@@ -79,6 +79,8 @@ export type Produto = {
   /** Caminho bruto salvo no banco (Storage ou URL externa) */
   imagem_ref?: string | null;
   disponivel: boolean;
+  promocao: boolean;
+  preco_promocional: number | null;
   precos: { id: string; tamanho: Tamanho | null; preco: number }[];
 };
 
