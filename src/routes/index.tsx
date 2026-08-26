@@ -180,7 +180,9 @@ function Cardapio() {
 function TituloSecao({ titulo, etiqueta }: { titulo: string; etiqueta?: string }) {
   return (
     <div className="mb-3 flex items-center justify-between">
-      <h2 className="font-display text-xl tracking-tight text-primary">{titulo}</h2>
+      <h2 className="min-w-0 truncate font-display text-fluid-title tracking-tight text-primary">
+        {titulo}
+      </h2>
       {etiqueta && (
         <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs font-bold text-accent">
           {etiqueta}
