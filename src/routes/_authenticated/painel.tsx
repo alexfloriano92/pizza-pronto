@@ -113,7 +113,7 @@ function Painel() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <header className="border-b border-border bg-primary px-6 py-4 text-primary-foreground">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -163,7 +163,7 @@ function Painel() {
         </div>
       </header>
 
-      <div className="grid gap-4 p-4 lg:grid-cols-4">
+      <main className="grid gap-4 p-4 lg:grid-cols-4">
         {STATUS_ORDEM.map((status) => {
           const doStatus = (pedidos ?? []).filter((p) => p.status === status);
           return (

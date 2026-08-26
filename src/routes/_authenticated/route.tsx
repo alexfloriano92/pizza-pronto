@@ -22,7 +22,7 @@ function LayoutInterno() {
 
   if (!ehAdmin) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="flex min-h-dvh items-center justify-center bg-background px-4">
         <div className="max-w-md space-y-4 text-center">
           <h1 className="text-2xl font-extrabold tracking-tight">Acesso restrito</h1>
           <p className="text-sm text-muted-foreground">
