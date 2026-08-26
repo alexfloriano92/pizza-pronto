@@ -116,35 +116,35 @@ function Cardapio() {
         </div>
       )}
 
-      {/* Hero */}
+      {/* Hero — aspect-ratio fixa evita CLS; altura limitada em telas largas */}
       <section className="mb-6">
-        <div className="relative h-56 overflow-hidden rounded-3xl bg-foreground sm:h-72">
+        <div className="relative aspect-[4/3] max-h-[22rem] w-full overflow-hidden rounded-3xl bg-foreground sm:aspect-[21/9]">
           <img
             src={promocao?.imagem_url || pizzas[0]?.imagem_url || IMAGEM_FALLBACK}
             alt="Pizza frita quentinha"
             className="size-full object-cover opacity-75"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent" />
-          <div className="absolute bottom-5 left-5 right-5">
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
-              <Flame className="size-3" /> Frita na hora
+          <div className="absolute inset-x-[5%] bottom-[6%]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-[0.625rem] font-bold uppercase tracking-wider text-primary-foreground">
+              <Flame className="size-3 shrink-0" /> Frita na hora
             </span>
-            <h1 className="mt-2 font-display text-3xl leading-tight text-background sm:text-4xl">
+            <h1 className="mt-2 font-display text-fluid-hero text-background">
               A melhor pizza frita
               <br />
               <span className="text-accent">da cidade.</span>
             </h1>
             <p className="mt-2 flex items-center gap-1.5 text-xs text-background/80">
-              <BikeIcon className="size-3.5" /> Entrega rápida ou retirada no balcão
+              <BikeIcon className="size-3.5 shrink-0" /> Entrega rápida ou retirada no balcão
             </p>
           </div>
         </div>
       </section>
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))] gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-2xl" />
+            <Skeleton key={i} className="aspect-[4/5] w-full rounded-2xl" />
           ))}
         </div>
       ) : (
@@ -161,7 +161,7 @@ function Cardapio() {
           to="/painel"
           aria-label="Área da equipe"
           title="Área da equipe"
-          className="inline-flex size-8 items-center justify-center opacity-60 transition-opacity hover:opacity-100"
+          className="inline-flex size-11 items-center justify-center opacity-60 transition-opacity hover:opacity-100"
         >
           <Lock className="size-3.5" />
         </Link>
@@ -180,7 +180,9 @@ function Cardapio() {
 function TituloSecao({ titulo, etiqueta }: { titulo: string; etiqueta?: string }) {
   return (
     <div className="mb-3 flex items-center justify-between">
-      <h2 className="font-display text-xl tracking-tight text-primary">{titulo}</h2>
+      <h2 className="min-w-0 truncate font-display text-fluid-title tracking-tight text-primary">
+        {titulo}
+      </h2>
       {etiqueta && (
         <span className="rounded-full bg-accent/15 px-2 py-0.5 text-xs font-bold text-accent">
           {etiqueta}
@@ -190,11 +192,12 @@ function TituloSecao({ titulo, etiqueta }: { titulo: string; etiqueta?: string }
   );
 }
 
+/** Área mínima de toque de 44x44px (2.75rem) em ambos os tamanhos. */
 function BotaoAdicionar({ tamanho = "md" }: { tamanho?: "sm" | "md" }) {
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground ${
-        tamanho === "sm" ? "size-7" : "size-9"
+      className={`inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground ${
+        tamanho === "sm" ? "sm:size-11" : ""
       }`}
     >
       <Plus className={tamanho === "sm" ? "size-4" : "size-5"} strokeWidth={3} />
@@ -273,30 +276,34 @@ function SecaoPizzas({
     <section className="mb-8">
       <TituloSecao titulo="Pizzas" etiqueta="Tradicionais" />
 
+      {/* Destaque: grid de 2 colunas (mídia + conteúdo) resiste a nomes longos via min-w-0 */}
       {destaque && (
         <button
           onClick={() => onSelecionar(destaque)}
-          className="mb-4 flex w-full gap-4 rounded-2xl border border-foreground/10 bg-card p-4 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+          className="mb-4 grid w-full grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-2xl border border-foreground/10 bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 sm:gap-4 sm:p-4"
         >
           <img
             src={destaque.imagem_url || IMAGEM_FALLBACK}
             alt={destaque.nome}
-            className="size-28 shrink-0 rounded-xl object-cover"
+            className="aspect-square w-20 shrink-0 rounded-xl object-cover sm:w-28"
           />
-          <div className="flex min-w-0 flex-1 flex-col justify-between">
-            <div>
-              <h3 className="font-bold leading-tight">{destaque.nome}</h3>
+          <div className="flex min-w-0 flex-col justify-between">
+            <div className="min-w-0">
+              <h3 className="truncate font-bold leading-tight">{destaque.nome}</h3>
               <p className="line-clamp-2 text-sm text-muted-foreground">{destaque.descricao}</p>
             </div>
-            <div className="mt-2 flex items-center justify-between">
-              <span className="font-bold text-primary">{moeda(precoVigente(destaque))}</span>
+            <div className="mt-2 flex items-center justify-between gap-2">
+              <span className="truncate font-bold text-primary">
+                {moeda(precoVigente(destaque))}
+              </span>
               <BotaoAdicionar />
             </div>
           </div>
         </button>
       )}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {/* Grade fluida: quebra pelo conteúdo (mín. 9.5rem), não por device */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))] gap-3 sm:gap-4">
         {resto.map((produto) => (
           <button
             key={produto.id}
@@ -309,10 +316,12 @@ function SecaoPizzas({
               loading="lazy"
               className="mb-3 aspect-square w-full rounded-xl object-cover"
             />
-            <h3 className="mb-1 text-sm font-bold leading-snug">{produto.nome}</h3>
+            <h3 className="mb-1 line-clamp-2 text-sm font-bold leading-snug">{produto.nome}</h3>
             <p className="mb-2 line-clamp-2 text-xs text-muted-foreground">{produto.descricao}</p>
-            <div className="mt-auto flex items-center justify-between">
-              <span className="text-sm font-bold text-primary">{moeda(precoVigente(produto))}</span>
+            <div className="mt-auto flex items-center justify-between gap-2">
+              <span className="truncate text-sm font-bold text-primary">
+                {moeda(precoVigente(produto))}
+              </span>
               <BotaoAdicionar tamanho="sm" />
             </div>
           </button>
@@ -333,12 +342,13 @@ function SecaoBebidas({
   return (
     <section className="mb-8">
       <TituloSecao titulo="Bebidas" etiqueta="Geladas" />
-      <div className="space-y-3">
+      {/* Linhas viram 2 colunas em telas médias, sem perder a leitura em 320px */}
+      <div className="grid gap-3 md:grid-cols-2">
         {itens.map((produto) => (
           <button
             key={produto.id}
             onClick={() => onSelecionar(produto)}
-            className="flex w-full items-center justify-between gap-3 rounded-2xl border border-foreground/10 bg-card px-3 py-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+            className="grid w-full min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-foreground/10 bg-card px-3 py-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
           >
             <div className="flex min-w-0 items-center gap-3">
               <img
@@ -352,7 +362,7 @@ function SecaoBebidas({
                 <p className="truncate text-xs text-muted-foreground">{produto.descricao}</p>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <span className="text-sm font-bold text-primary">{moeda(precoVigente(produto))}</span>
               <BotaoAdicionar tamanho="sm" />
             </div>
@@ -402,7 +412,8 @@ function DialogProduto({
 
   return (
     <Dialog open={!!produto} onOpenChange={(aberto) => !aberto && onClose()}>
-      <DialogContent className="max-w-md">
+      {/* Mobile: quase tela cheia com scroll interno (overscroll-contain evita rolar o fundo) */}
+      <DialogContent className="max-h-[90svh] w-[calc(100vw-1.5rem)] max-w-md overflow-y-auto overscroll-contain rounded-2xl">
         <DialogHeader>
           <DialogTitle>{produto.nome}</DialogTitle>
           <DialogDescription>{produto.descricao}</DialogDescription>

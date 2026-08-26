@@ -8,28 +8,29 @@ export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="min-h-screen bg-background">
+    /* min-h-dvh respeita a barra do navegador mobile; overflow-x-hidden trava scroll lateral */
+    <div className="min-h-dvh overflow-x-hidden bg-background">
       <header className="sticky top-0 z-40 border-b border-foreground/10 bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="flex size-10 items-center justify-center rounded-full bg-primary font-display text-lg leading-none text-primary-foreground">
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2">
+          <Link to="/" className="flex min-w-0 items-center gap-2">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-display text-lg leading-none text-primary-foreground">
               PF
             </span>
-            <span className="font-display text-lg leading-[0.9] text-primary">
+            <span className="truncate font-display text-lg leading-[0.9] text-primary">
               Pizza
               <br />
               Frita
             </span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             {pathname !== "/acompanhar" && (
               <Link
                 to="/acompanhar"
                 aria-label="Acompanhar pedido"
-                className="inline-flex items-center gap-1.5 rounded-full border border-foreground/15 px-3 py-2 text-xs font-semibold transition-colors hover:bg-secondary"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border border-foreground/15 px-3 text-xs font-semibold transition-colors hover:bg-secondary"
               >
-                <Search className="size-3.5" />
+                <Search className="size-4 shrink-0" />
                 <span className="hidden sm:inline">Acompanhar</span>
               </Link>
             )}
@@ -37,7 +38,7 @@ export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
               <Link
                 to="/carrinho"
                 aria-label="Abrir carrinho"
-                className="relative inline-flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
+                className="relative inline-flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
               >
                 <ShoppingCart className="size-5" />
                 {totalItens > 0 && (
