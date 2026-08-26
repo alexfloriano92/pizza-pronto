@@ -316,10 +316,12 @@ function SecaoPizzas({
               loading="lazy"
               className="mb-3 aspect-square w-full rounded-xl object-cover"
             />
-            <h3 className="mb-1 text-sm font-bold leading-snug">{produto.nome}</h3>
+            <h3 className="mb-1 line-clamp-2 text-sm font-bold leading-snug">{produto.nome}</h3>
             <p className="mb-2 line-clamp-2 text-xs text-muted-foreground">{produto.descricao}</p>
-            <div className="mt-auto flex items-center justify-between">
-              <span className="text-sm font-bold text-primary">{moeda(precoVigente(produto))}</span>
+            <div className="mt-auto flex items-center justify-between gap-2">
+              <span className="truncate text-sm font-bold text-primary">
+                {moeda(precoVigente(produto))}
+              </span>
               <BotaoAdicionar tamanho="sm" />
             </div>
           </button>
