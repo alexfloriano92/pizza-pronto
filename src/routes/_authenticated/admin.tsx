@@ -170,7 +170,7 @@ function Admin() {
             />
           </>
         )}
-      </div>
+      </main>
 
       <FormularioProduto
         rascunho={rascunho}

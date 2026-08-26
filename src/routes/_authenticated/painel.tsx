@@ -189,7 +189,7 @@ function Painel() {
             </section>
           );
         })}
-      </div>
+      </main>
     </div>
   );
 }
