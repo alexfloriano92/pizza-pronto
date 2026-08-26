@@ -142,9 +142,9 @@ function Cardapio() {
       </section>
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))] gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-2xl" />
+            <Skeleton key={i} className="aspect-[4/5] w-full rounded-2xl" />
           ))}
         </div>
       ) : (
