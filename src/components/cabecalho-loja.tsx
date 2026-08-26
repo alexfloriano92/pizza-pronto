@@ -10,8 +10,16 @@ export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
   return (
     /* min-h-dvh respeita a barra do navegador mobile; overflow-x-hidden trava scroll lateral */
     <div className="min-h-dvh overflow-x-hidden bg-background">
+      {/* Atalho para teclado/leitor de tela: só aparece ao receber foco */}
+      <a
+        href="#conteudo"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground"
+      >
+        Pular para o conteúdo
+      </a>
       <header className="sticky top-0 z-40 border-b border-foreground/10 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2">
+
           <Link to="/" className="flex min-w-0 items-center gap-2">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-display text-lg leading-none text-primary-foreground">
               PF
