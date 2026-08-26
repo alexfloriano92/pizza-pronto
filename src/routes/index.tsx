@@ -64,6 +64,12 @@ function precoBase(produto: Produto) {
   return precos.length ? Math.min(...precos.map((p) => p.preco)) : 0;
 }
 
+/** Preço cheio do tamanho grande (usado como referência na promoção). */
+function precoGrande(produto: Produto) {
+  const precos = precosOrdenados(produto);
+  return precos.find((p) => p.tamanho === "grande")?.preco ?? precoBase(produto);
+}
+
 function precoVigente(produto: Produto) {
   return produto.promocao && produto.preco_promocional != null
     ? produto.preco_promocional
@@ -204,37 +210,57 @@ function PromocaoDoDia({
   onSelecionar: (p: Produto) => void;
 }) {
   const promo = produto.preco_promocional;
+  const cheio = precoGrande(produto);
+  const desconto =
+    promo != null && cheio > promo ? Math.round(((cheio - promo) / cheio) * 100) : 0;
+
   return (
     <section className="mb-8">
       <TituloSecao titulo="Promoção do dia" etiqueta="Só hoje" />
       <button
         onClick={() => onSelecionar(produto)}
-        className="flex w-full gap-4 overflow-hidden rounded-3xl bg-primary p-4 text-left text-primary-foreground shadow-brutal transition-transform hover:-translate-y-0.5"
+        className="relative w-full overflow-hidden rounded-3xl bg-primary text-left text-primary-foreground shadow-brutal transition-transform hover:-translate-y-0.5"
       >
-        <img
-          src={produto.imagem_url || IMAGEM_FALLBACK}
-          alt={produto.nome}
-          className="size-28 shrink-0 rounded-2xl object-cover sm:size-32"
-        />
-        <div className="flex min-w-0 flex-1 flex-col justify-between">
+        <div className="relative h-48 w-full overflow-hidden sm:h-60">
+          <img
+            src={produto.imagem_url || IMAGEM_FALLBACK}
+            alt={produto.nome}
+            className="size-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent" />
+
+          <span className="absolute left-4 top-4 inline-flex animate-pulse items-center gap-1 rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-accent-foreground shadow-lg">
+            <Flame className="size-3" /> Promoção do dia
+          </span>
+
+          {desconto > 0 && (
+            <span className="absolute right-4 top-4 flex size-16 rotate-6 flex-col items-center justify-center rounded-full bg-background font-display text-lg leading-none text-primary shadow-lg">
+              -{desconto}%
+              <span className="mt-0.5 text-[8px] font-bold uppercase tracking-wider">off</span>
+            </span>
+          )}
+
+          <div className="absolute bottom-3 left-4 right-4">
+            <h3 className="font-display text-2xl leading-tight sm:text-3xl">{produto.nome}</h3>
+            <p className="line-clamp-1 text-xs opacity-90">{produto.descricao}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
-              <Flame className="size-3" /> Oferta
+            <span className="inline-flex items-center rounded-full bg-primary-foreground/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+              Tamanho único · Grande
             </span>
-            <h3 className="mt-1 font-display text-lg leading-tight">{produto.nome}</h3>
-            <p className="line-clamp-2 text-xs opacity-85">{produto.descricao}</p>
-          </div>
-          <div className="mt-2 flex items-center justify-between gap-2">
-            <span className="flex items-baseline gap-2">
-              {promo != null && (
-                <span className="text-xs line-through opacity-70">{moeda(precoBase(produto))}</span>
+            <span className="mt-1 flex items-baseline gap-2">
+              {promo != null && cheio > promo && (
+                <span className="text-xs line-through opacity-70">{moeda(cheio)}</span>
               )}
-              <span className="font-display text-lg">{moeda(precoVigente(produto))}</span>
-            </span>
-            <span className="inline-flex size-9 items-center justify-center rounded-xl bg-background text-primary">
-              <Plus className="size-5" strokeWidth={3} />
+              <span className="font-display text-2xl">{moeda(precoVigente(produto))}</span>
             </span>
           </div>
+          <span className="inline-flex items-center gap-2 rounded-xl bg-background px-4 py-2 font-bold text-primary">
+            <Plus className="size-5" strokeWidth={3} /> Pedir
+          </span>
         </div>
       </button>
     </section>
@@ -361,7 +387,14 @@ function DialogProduto({
   React.useEffect(() => {
     if (produto) {
       const precos = precosOrdenados(produto);
-      setTamanho(produto.tipo === "pizza" ? ((precos[0]?.tamanho ?? null) as Tamanho | null) : null);
+      const promocional = produto.promocao && produto.preco_promocional != null;
+      setTamanho(
+        produto.tipo === "pizza"
+          ? promocional
+            ? "grande"
+            : ((precos[0]?.tamanho ?? null) as Tamanho | null)
+          : null,
+      );
       setObs("");
     }
   }, [produto]);
@@ -391,11 +424,11 @@ function DialogProduto({
 
         {emPromocao && (
           <p className="rounded-xl bg-accent/15 px-3 py-2 text-xs font-bold text-accent">
-            Promoção do dia — preço único {moeda(precoAtual)}
+            Promoção do dia — tamanho único Grande por {moeda(precoAtual)}
           </p>
         )}
 
-        {produto.tipo === "pizza" && (
+        {produto.tipo === "pizza" && !emPromocao && (
           <div>
             <Label className="mb-2 block">Tamanho</Label>
             <div className="grid grid-cols-3 gap-2">
