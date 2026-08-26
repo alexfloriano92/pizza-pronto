@@ -108,7 +108,7 @@ function Cardapio() {
   return (
     <CabecalhoLoja>
       {fechada && (
-        <div className="-mx-4 mb-4 flex items-center justify-center gap-2 bg-accent px-4 py-2 text-accent-foreground">
+        <div role="status" className="-mx-4 mb-4 flex items-center justify-center gap-2 bg-accent px-4 py-2 text-accent-foreground">
           <Clock className="size-4" />
           <p className="text-[11px] font-bold uppercase tracking-wider">
             Loja fechada — {config?.mensagem?.trim() || MENSAGEM_FECHADA_PADRAO}
@@ -196,6 +196,7 @@ function TituloSecao({ titulo, etiqueta }: { titulo: string; etiqueta?: string }
 function BotaoAdicionar({ tamanho = "md" }: { tamanho?: "sm" | "md" }) {
   return (
     <span
+      aria-hidden="true"
       className={`inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground ${
         tamanho === "sm" ? "sm:size-11" : ""
       }`}
@@ -222,7 +223,8 @@ function PromocaoDoDia({
       <TituloSecao titulo="Promoção do dia" etiqueta="Só hoje" />
       <button
         onClick={() => onSelecionar(produto)}
-        className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border-2 border-dashed border-primary bg-card p-2.5 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 sm:gap-4 sm:p-4"
+        aria-label={`Promoção do dia: ${produto.nome}, ${moeda(precoVigente(produto))}. Abrir opções`}
+        className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border-2 border-dashed border-primary bg-card p-2.5 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:gap-4 sm:p-4"
       >
         <div className="relative shrink-0">
           <img
@@ -280,7 +282,8 @@ function SecaoPizzas({
       {destaque && (
         <button
           onClick={() => onSelecionar(destaque)}
-          className="mb-4 grid w-full grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-2xl border border-foreground/10 bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 sm:gap-4 sm:p-4"
+          aria-label={`${destaque.nome}, ${moeda(precoVigente(destaque))}. Abrir opções`}
+          className="mb-4 grid w-full grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-2xl border border-foreground/10 bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:gap-4 sm:p-4"
         >
           <img
             src={destaque.imagem_url || IMAGEM_FALLBACK}
@@ -308,7 +311,8 @@ function SecaoPizzas({
           <button
             key={produto.id}
             onClick={() => onSelecionar(produto)}
-            className="flex flex-col rounded-2xl border border-foreground/10 bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+            aria-label={`${produto.nome}, ${moeda(precoVigente(produto))}. Abrir opções`}
+            className="flex flex-col rounded-2xl border border-foreground/10 bg-card p-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <img
               src={produto.imagem_url || IMAGEM_FALLBACK}
@@ -348,7 +352,8 @@ function SecaoBebidas({
           <button
             key={produto.id}
             onClick={() => onSelecionar(produto)}
-            className="grid w-full min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-foreground/10 bg-card px-3 py-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5"
+            aria-label={`${produto.nome}, ${moeda(precoVigente(produto))}. Abrir opções`}
+            className="grid w-full min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-foreground/10 bg-card px-3 py-3 text-left shadow-brutal-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <div className="flex min-w-0 items-center gap-3">
               <img

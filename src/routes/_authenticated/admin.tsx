@@ -108,7 +108,7 @@ function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <header className="border-b border-border bg-primary px-6 py-4 text-primary-foreground">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -142,7 +142,7 @@ function Admin() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl space-y-8 p-6">
+      <main className="mx-auto max-w-5xl space-y-8 p-6">
         <div className="flex flex-wrap gap-2">
           <Button onClick={() => setRascunho(rascunhoVazio("pizza"))}>
             <Plus className="size-4" /> Nova pizza
@@ -170,7 +170,7 @@ function Admin() {
             />
           </>
         )}
-      </div>
+      </main>
 
       <FormularioProduto
         rascunho={rascunho}

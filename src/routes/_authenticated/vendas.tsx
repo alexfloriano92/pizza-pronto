@@ -147,7 +147,7 @@ function Vendas() {
   }, [pedidos]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <header className="border-b border-border bg-primary px-6 py-4 text-primary-foreground">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
