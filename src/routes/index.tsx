@@ -78,6 +78,18 @@ function precoVigente(produto: Produto) {
 
 function Cardapio() {
   const [selecionado, setSelecionado] = React.useState<Produto | null>(null);
+  /* Guarda o botão que abriu o modal para devolver o foco ao fechar (WCAG 2.4.3) */
+  const gatilhoRef = React.useRef<HTMLElement | null>(null);
+
+  const abrirProduto = React.useCallback((p: Produto) => {
+    gatilhoRef.current = document.activeElement as HTMLElement | null;
+    setSelecionado(p);
+  }, []);
+
+  const fecharProduto = React.useCallback(() => {
+    setSelecionado(null);
+    requestAnimationFrame(() => gatilhoRef.current?.focus());
+  }, []);
   const { data: config } = useConfigLoja();
   const fechada = config ? !config.aberta : false;
 
@@ -149,9 +161,9 @@ function Cardapio() {
         </div>
       ) : (
         <>
-          {promocao && <PromocaoDoDia produto={promocao} onSelecionar={setSelecionado} />}
-          <SecaoPizzas itens={pizzas} onSelecionar={setSelecionado} />
-          <SecaoBebidas itens={bebidas} onSelecionar={setSelecionado} />
+          {promocao && <PromocaoDoDia produto={promocao} onSelecionar={abrirProduto} />}
+          <SecaoPizzas itens={pizzas} onSelecionar={abrirProduto} />
+          <SecaoBebidas itens={bebidas} onSelecionar={abrirProduto} />
         </>
       )}
 
@@ -171,7 +183,7 @@ function Cardapio() {
       <DialogProduto
         produto={selecionado}
         fechada={fechada}
-        onClose={() => setSelecionado(null)}
+        onClose={fecharProduto}
       />
     </CabecalhoLoja>
   );
@@ -418,7 +430,13 @@ function DialogProduto({
   return (
     <Dialog open={!!produto} onOpenChange={(aberto) => !aberto && onClose()}>
       {/* Mobile: quase tela cheia com scroll interno (overscroll-contain evita rolar o fundo) */}
-      <DialogContent className="max-h-[90svh] w-[calc(100vw-1.5rem)] max-w-md overflow-y-auto overscroll-contain rounded-2xl">
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).focus();
+        }}
+        tabIndex={-1}
+        className="max-h-[90svh] w-[calc(100vw-1.5rem)] max-w-md overflow-y-auto overscroll-contain rounded-2xl">
         <DialogHeader>
           <DialogTitle>{produto.nome}</DialogTitle>
           <DialogDescription>{produto.descricao}</DialogDescription>
