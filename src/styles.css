@@ -134,6 +134,21 @@
   --sidebar-ring: oklch(0.62 0.185 32);
 }
 
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+@utility shadow-brutal {
+  box-shadow: 6px 6px 0 0 var(--color-primary);
+}
+
+@utility shadow-brutal-sm {
+  box-shadow: 4px 4px 0 0 var(--color-foreground);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -142,5 +157,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
   }
+
 }
