@@ -190,11 +190,12 @@ function TituloSecao({ titulo, etiqueta }: { titulo: string; etiqueta?: string }
   );
 }
 
+/** Área mínima de toque de 44x44px (2.75rem) em ambos os tamanhos. */
 function BotaoAdicionar({ tamanho = "md" }: { tamanho?: "sm" | "md" }) {
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground ${
-        tamanho === "sm" ? "size-7" : "size-9"
+      className={`inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground ${
+        tamanho === "sm" ? "sm:size-11" : ""
       }`}
     >
       <Plus className={tamanho === "sm" ? "size-4" : "size-5"} strokeWidth={3} />
