@@ -130,6 +130,8 @@ export type Database = {
           id: string
           imagem_url: string | null
           nome: string
+          preco_promocional: number | null
+          promocao: boolean
           tipo: string
         }
         Insert: {
@@ -140,6 +142,8 @@ export type Database = {
           id?: string
           imagem_url?: string | null
           nome: string
+          preco_promocional?: number | null
+          promocao?: boolean
           tipo: string
         }
         Update: {
@@ -150,6 +154,8 @@ export type Database = {
           id?: string
           imagem_url?: string | null
           nome?: string
+          preco_promocional?: number | null
+          promocao?: boolean
           tipo?: string
         }
         Relationships: []
