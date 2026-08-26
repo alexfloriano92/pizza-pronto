@@ -116,26 +116,26 @@ function Cardapio() {
         </div>
       )}
 
-      {/* Hero */}
+      {/* Hero — aspect-ratio fixa evita CLS; altura limitada em telas largas */}
       <section className="mb-6">
-        <div className="relative h-56 overflow-hidden rounded-3xl bg-foreground sm:h-72">
+        <div className="relative aspect-[4/3] max-h-[22rem] w-full overflow-hidden rounded-3xl bg-foreground sm:aspect-[21/9]">
           <img
             src={promocao?.imagem_url || pizzas[0]?.imagem_url || IMAGEM_FALLBACK}
             alt="Pizza frita quentinha"
             className="size-full object-cover opacity-75"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent" />
-          <div className="absolute bottom-5 left-5 right-5">
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
-              <Flame className="size-3" /> Frita na hora
+          <div className="absolute inset-x-[5%] bottom-[6%]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-[0.625rem] font-bold uppercase tracking-wider text-primary-foreground">
+              <Flame className="size-3 shrink-0" /> Frita na hora
             </span>
-            <h1 className="mt-2 font-display text-3xl leading-tight text-background sm:text-4xl">
+            <h1 className="mt-2 font-display text-fluid-hero text-background">
               A melhor pizza frita
               <br />
               <span className="text-accent">da cidade.</span>
             </h1>
             <p className="mt-2 flex items-center gap-1.5 text-xs text-background/80">
-              <BikeIcon className="size-3.5" /> Entrega rápida ou retirada no balcão
+              <BikeIcon className="size-3.5 shrink-0" /> Entrega rápida ou retirada no balcão
             </p>
           </div>
         </div>
