@@ -79,17 +79,21 @@ function precoVigente(produto: Produto) {
 function Cardapio() {
   const [selecionado, setSelecionado] = React.useState<Produto | null>(null);
   /* Guarda o botão que abriu o modal para devolver o foco ao fechar (WCAG 2.4.3) */
-  const gatilhoRef = React.useRef<HTMLElement | null>(null);
+  const { guardarGatilho, devolverFoco } = useRetornoDeFoco();
 
-  const abrirProduto = React.useCallback((p: Produto) => {
-    gatilhoRef.current = document.activeElement as HTMLElement | null;
-    setSelecionado(p);
-  }, []);
+  const abrirProduto = React.useCallback(
+    (p: Produto) => {
+      guardarGatilho();
+      setSelecionado(p);
+    },
+    [guardarGatilho],
+  );
 
   const fecharProduto = React.useCallback(() => {
     setSelecionado(null);
-    requestAnimationFrame(() => gatilhoRef.current?.focus());
-  }, []);
+    devolverFoco();
+  }, [devolverFoco]);
+
   const { data: config } = useConfigLoja();
   const fechada = config ? !config.aberta : false;
 
