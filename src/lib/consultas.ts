@@ -54,7 +54,7 @@ export async function urlAssinada(caminho: string): Promise<string | null> {
 export async function buscarProdutos(apenasDisponiveis: boolean): Promise<Produto[]> {
   let query = supabase
     .from("produtos")
-    .select("id, tipo, nome, descricao, imagem_url, disponivel, precos_produto(id, tamanho, preco)")
+    .select("id, tipo, nome, descricao, imagem_url, disponivel, promocao, preco_promocional, precos_produto(id, tamanho, preco)")
     .order("nome", { ascending: true });
 
   if (apenasDisponiveis) query = query.eq("disponivel", true);
@@ -77,6 +77,11 @@ export async function buscarProdutos(apenasDisponiveis: boolean): Promise<Produt
       descricao: (p.descricao as string) ?? "",
       imagem_url: (p.imagem_url as string) ?? null,
       disponivel: p.disponivel as boolean,
+      promocao: Boolean((p as { promocao?: boolean }).promocao),
+      preco_promocional:
+        (p as { preco_promocional?: number | string | null }).preco_promocional != null
+          ? Number((p as { preco_promocional?: number | string | null }).preco_promocional)
+          : null,
       precos,
     };
   });

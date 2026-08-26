@@ -55,10 +55,10 @@
 }
 
 :root {
-  --radius: 0.125rem;
+  --radius: 1rem;
   --background: oklch(0.977 0.019 85);
   --foreground: oklch(0.276 0.032 52);
-  --card: oklch(0.977 0.019 85);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.276 0.032 52);
   --popover: oklch(0.977 0.019 85);
   --popover-foreground: oklch(0.276 0.032 52);
@@ -142,11 +142,18 @@
 }
 
 @utility shadow-brutal {
-  box-shadow: 6px 6px 0 0 var(--color-primary);
+  box-shadow: 0 18px 40px -24px color-mix(in oklab, var(--color-foreground) 55%, transparent);
 }
 
 @utility shadow-brutal-sm {
-  box-shadow: 4px 4px 0 0 var(--color-foreground);
+  box-shadow: 0 8px 20px -14px color-mix(in oklab, var(--color-foreground) 60%, transparent);
+}
+
+@utility card-soft {
+  background-color: var(--color-card);
+  border: 1px solid color-mix(in oklab, var(--color-foreground) 8%, transparent);
+  border-radius: 1rem;
+  box-shadow: 0 10px 24px -20px color-mix(in oklab, var(--color-foreground) 70%, transparent);
 }
 
 @layer base {
