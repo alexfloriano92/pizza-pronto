@@ -402,7 +402,8 @@ function DialogProduto({
 
   return (
     <Dialog open={!!produto} onOpenChange={(aberto) => !aberto && onClose()}>
-      <DialogContent className="max-w-md">
+      {/* Mobile: quase tela cheia com scroll interno (overscroll-contain evita rolar o fundo) */}
+      <DialogContent className="max-h-[90svh] w-[calc(100vw-1.5rem)] max-w-md overflow-y-auto overscroll-contain rounded-2xl">
         <DialogHeader>
           <DialogTitle>{produto.nome}</DialogTitle>
           <DialogDescription>{produto.descricao}</DialogDescription>
