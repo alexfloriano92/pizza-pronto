@@ -20,14 +20,18 @@ export function CabecalhoLoja({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-foreground/10 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2">
 
-          <Link to="/" className="flex min-w-0 items-center gap-2">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-display text-lg leading-none text-primary-foreground">
-              PF
-            </span>
+          <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="Pizza Fritzza — ir para o cardápio">
+            <img
+              src={logoFritzza}
+              alt="Logo Pizza Fritzza"
+              width={1024}
+              height={1024}
+              className="size-11 shrink-0 rounded-full object-contain"
+            />
             <span className="truncate font-display text-lg leading-[0.9] text-primary">
               Pizza
               <br />
-              Frita
+              Fritzza
             </span>
           </Link>
 
