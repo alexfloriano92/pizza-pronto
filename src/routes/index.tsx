@@ -362,7 +362,7 @@ function SecaoBebidas({
                 <p className="truncate text-xs text-muted-foreground">{produto.descricao}</p>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <span className="text-sm font-bold text-primary">{moeda(precoVigente(produto))}</span>
               <BotaoAdicionar tamanho="sm" />
             </div>
