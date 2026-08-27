@@ -19,19 +19,33 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 });
 // Cabeçalhos de segurança aplicados a todas as respostas HTML/JSON.
 // Obs.: não usamos X-Frame-Options/frame-ancestors para não quebrar o preview em iframe.
+const CABECALHOS_SEGURANCA: Record<string, string> = {
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "X-DNS-Prefetch-Control": "off",
+  "Permissions-Policy": "camera=(), microphone=(), payment=(), interest-cohort=()",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+};
+
 const securityHeadersMiddleware = createMiddleware().server(async ({ next }) => {
-  const response = await next();
-  const res = response as unknown as { headers?: Headers };
-  if (res?.headers && typeof res.headers.set === "function") {
-    res.headers.set("X-Content-Type-Options", "nosniff");
-    res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-    res.headers.set("X-DNS-Prefetch-Control", "off");
-    res.headers.set("Permissions-Policy", "camera=(), microphone=(), payment=(), interest-cohort=()");
-    res.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-    res.headers.set("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  const result = (await next()) as unknown;
+  const alvo =
+    result instanceof Response
+      ? result
+      : ((result as { response?: unknown } | null)?.response as Response | undefined);
+  try {
+    if (alvo?.headers && typeof alvo.headers.set === "function") {
+      for (const [nome, valor] of Object.entries(CABECALHOS_SEGURANCA)) {
+        alvo.headers.set(nome, valor);
+      }
+    }
+  } catch {
+    /* headers imutáveis: ignora */
   }
-  return response;
+  return result as never;
 });
+
 
 // Start installs this automatically when src/start.ts is absent; defining the
 // file opts out, so re-add it explicitly to keep server functions protected
